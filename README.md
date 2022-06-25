@@ -1,6 +1,6 @@
-# naive-ui-template
+# music-app
 
-This template should help get you started developing with Vue 3 in Vite.
+Music App. Tauri + Vite + Vue + NaiveUI + Windicss.
 
 ## Recommended IDE Setup
 
@@ -44,3 +44,4 @@ npm run build
 ```sh
 npm run lint
 ```
+ 
