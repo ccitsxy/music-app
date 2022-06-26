@@ -31,3 +31,4 @@ stats.html
 components.d.ts
 pnpm-lock.yaml
 src-tauri/Cargo.lock
+src-tauri/target
