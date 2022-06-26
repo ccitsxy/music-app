@@ -2,7 +2,7 @@
 import { useRouter } from 'vue-router'
 import type { MenuOption } from 'naive-ui'
 import { useMediaControls } from '@vueuse/core'
-import { computed, ref } from 'vue'
+import { computed, provide, ref } from 'vue'
 
 const menuOptions: MenuOption[] = [
   {
@@ -71,11 +71,11 @@ function updateValue(key: string) {
   router.push(key)
 }
 
-const music = ref('Sad Sometimes (feat. 黄霄云).mp3')
+const src = ref('')
 const audio = ref<HTMLMediaElement>()
 const { playing, currentTime, duration, volume, buffered, muted } =
   useMediaControls(audio, {
-    src: music,
+    src: src,
   })
 function formatDuration(duration: number) {
   let minutes = Math.floor(duration / 60).toString()
@@ -87,6 +87,8 @@ function formatDuration(duration: number) {
 const endBuffer = computed(() =>
   buffered.value.length > 0 ? buffered.value[buffered.value.length - 1][1] : 0
 )
+const layoutContent = ref<HTMLElement>()
+provide('layoutContent', layoutContent)
 </script>
 
 <template>
@@ -99,11 +101,7 @@ const endBuffer = computed(() =>
           @update-value="updateValue"
         />
       </n-layout-sider>
-      <n-layout-content
-        ref="layoutContent"
-        class="!h-[calc(100vh-9rem)]]"
-        content-style="padding: 24px;"
-      >
+      <n-layout-content ref="layoutContent" content-style="padding: 24px;">
         <router-view v-slot="{ Component, route }">
           <keep-alive>
             <component :is="Component" :key="route.fullPath" />
@@ -116,7 +114,7 @@ const endBuffer = computed(() =>
       class="h-20 flex items-center bg-transparent px-2"
     >
       <n-grid class="h-full" :cols="3">
-        <n-gi class="flex items-center"> <img src="@/assets/logo.svg" /> </n-gi>
+        <n-gi class="flex items-center"></n-gi>
         <n-gi class="flex flex-col items-center justify-center">
           <div class="flex items-center">
             <audio ref="audio" />
@@ -152,7 +150,7 @@ const endBuffer = computed(() =>
             :step="0.01"
             :max="1"
             :format-tooltip="
-              (value) => {
+              (value:number) => {
                 return Math.floor(value * 100)
               }
             "

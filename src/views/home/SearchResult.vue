@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
 import { useFetch } from '@vueuse/core'
-import { h, reactive, ref } from 'vue'
+import { h, inject, reactive, ref } from 'vue'
+import type { Ref } from 'vue'
 import { NEl } from 'naive-ui'
 
 const columns = [
@@ -12,7 +13,9 @@ const columns = [
       if (row.alia.length) {
         return h(
           'span',
-          { style: { cursor: 'pointer' } },
+          {
+            style: { cursor: 'pointer' },
+          },
           {
             default: () => [
               row.name,
@@ -124,6 +127,7 @@ onFetchResponse(() => {
   )
   loading.value = false
 })
+const layoutContent = inject<Ref<HTMLElement>>('layoutContent')
 function onUpdatePage(page: number) {
   pagination.page = page
   url.value = encodeURI(
@@ -134,6 +138,7 @@ function onUpdatePage(page: number) {
     }`
   )
   loading.value = true
+  layoutContent?.value.scrollTo({ top: 0, behavior: 'smooth' })
 }
 </script>
 <template>
