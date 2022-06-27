@@ -101,7 +101,7 @@ provide('layoutContent', layoutContent)
           @update-value="updateValue"
         />
       </n-layout-sider>
-      <n-layout-content ref="layoutContent" content-style="padding: 24px;">
+      <n-layout-content ref="layoutContent" content-style="padding: 24px">
         <router-view v-slot="{ Component, route }">
           <keep-alive>
             <component :is="Component" :key="route.fullPath" />

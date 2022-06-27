@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { appWindow } from '@tauri-apps/api/window'
-import { darkTheme, useThemeVars } from 'naive-ui'
+import { useThemeVars, darkTheme } from 'naive-ui'
 import { inject, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import BaseButton from '../components/BaseButton.vue'
 
 const theme = inject('theme')
 const searchText = ref('')
@@ -28,6 +29,7 @@ const themeVars = useThemeVars()
       class="h-16 flex items-center bg-$n-color px-2"
       bordered
     >
+      <base-button circle> </base-button>
       <base-button :disabled="disableBack" @click="$router.go(-1)">
         <i-carbon-chevron-left />
       </base-button>
@@ -44,25 +46,23 @@ const themeVars = useThemeVars()
           <i-carbon-search />
         </template>
       </n-input>
-      <div class="flex-1"></div>
-      <div class="flex">
-        <base-button v-if="theme" @click="theme = null">
-          <i-carbon-moon />
-        </base-button>
-        <base-button v-else @click="theme = darkTheme">
-          <i-carbon-sun />
-        </base-button>
-        <base-button @click="appWindow.minimize()">
-          <i-codicon-chrome-minimize />
-        </base-button>
-        <base-button @click="appWindow.toggleMaximize()">
-          <i-codicon-chrome-maximize />
-          <!-- <i-codicon-chrome-restore /> -->
-        </base-button>
-        <base-button @click="appWindow.close()">
-          <i-codicon-chrome-close />
-        </base-button>
-      </div>
+      <div class="flex-1" />
+      <base-button v-if="theme" @click="theme = null">
+        <i-carbon-moon />
+      </base-button>
+      <base-button v-else @click="theme = darkTheme">
+        <i-carbon-sun />
+      </base-button>
+      <base-button @click="appWindow.minimize()">
+        <i-codicon-chrome-minimize />
+      </base-button>
+      <base-button @click="appWindow.toggleMaximize()">
+        <i-codicon-chrome-maximize />
+        <!-- <i-codicon-chrome-restore /> -->
+      </base-button>
+      <base-button @click="appWindow.close()">
+        <i-codicon-chrome-close />
+      </base-button>
     </n-layout-header>
 
     <n-layout-content class="h-[calc(100vh-4rem)]">
@@ -80,7 +80,7 @@ const themeVars = useThemeVars()
 ::-webkit-scrollbar-thumb {
   background-color: v-bind('themeVars.scrollbarColor');
 }
-:root {
+.n-layout .n-layout-scroll-container {
   overflow: overlay;
 }
 </style>

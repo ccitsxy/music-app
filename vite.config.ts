@@ -18,7 +18,7 @@ export default defineConfig({
     Components({
       dts: true,
       resolvers: [NaiveUiResolver(), IconsResolver()],
-      dirs: ['src/components', 'src/layouts'],
+      dirs: ['src/components', 'src/layouts', 'src/views'],
     }),
     Icons(),
     visualizer({
