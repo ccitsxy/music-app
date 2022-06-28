@@ -30,28 +30,28 @@ watch([scrubbing, elementX], () => {
 <template>
   <n-el
     ref="scrubber"
-    class="relative h-1 py-7px rounded cursor-pointer select-none"
+    class="relative h-1 py-7px cursor-pointer select-none"
     @mousedown="scrubbing = true"
   >
     <div
-      class="relative overflow-hidden h-full w-full rounded bg-$border-color bg-opacity-20"
+      class="relative overflow-hidden h-full w-full bg-$border-color bg-opacity-20"
     >
       <div
-        class="h-full absolute top-0 left-0 bg-$primary-color rounded"
-        :style="{ width: `${Math.floor((value / max) * 100)}%` }"
+        class="h-full absolute top-0 left-0 bg-$primary-color"
+        :style="{ width: `${(value / max) * 100}%` }"
       />
       <div
-        class="h-full absolute opacity-30 top-0 left-0 bg-$primary-color-hover rounded"
-        :style="{ width: `${Math.floor((secondary / max) * 100)}%` }"
+        class="h-full absolute opacity-30 top-0 left-0 bg-$primary-color-hover"
+        :style="{ width: `${(secondary / max) * 100}%` }"
       />
     </div>
-    <div class="h-full absolute left-9px right-9px bottom-0 top-0">
+    <div class="h-full absolute left-4px right-4px bottom-0 top-0">
       <div
         class="z-0 outline-none absolute top-1/2 cursor-pointer flex"
         style="transform: translate(-50%, -50%)"
-        :style="{ left: `${Math.floor((value / max) * 100)}%` }"
+        :style="{ left: `${(value / max) * 100}%` }"
       >
-        <div class="h-18px w-18px rounded-1/2 bg-white slider-shadow" />
+        <div class="h-8px w-8px rounded-1/2 bg-$primary-color slider-shadow" />
       </div>
     </div>
   </n-el>

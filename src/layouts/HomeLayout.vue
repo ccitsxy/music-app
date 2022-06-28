@@ -1,70 +1,17 @@
 <script setup lang="ts">
+import { computed, provide, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
+
 import type { MenuOption } from 'naive-ui'
 import { useMediaControls } from '@vueuse/core'
-import { computed, provide, ref } from 'vue'
+
+import { useSongStore } from '@/stores/song'
 
 const menuOptions: MenuOption[] = [
   {
     label: '发现音乐',
     key: '/discover',
   },
-  // {
-  //   label: '播客',
-  //   key: '/podcast',
-  // },
-  // {
-  //   label: '视频',
-  //   key: '/video',
-  // },
-  // {
-  //   label: '关注',
-  //   key: 'follow',
-  // },
-  // {
-  //   label: '直播',
-  //   key: 'live',
-  // },
-  // {
-  //   label: '私人FM',
-  //   key: 'FM',
-  // },
-  // {
-  //   type: 'group',
-  //   label: '我的音乐',
-  //   key: 'my music',
-  //   children: [],
-  // },
-  // {
-  //   label: '本地与下载',
-  //   key: 'local&download',
-  // },
-  // {
-  //   label: '最近播放',
-  //   key: 'recent play',
-  // },
-  // {
-  //   label: '我的音乐云盘',
-  //   key: 'my music cloud',
-  // },
-  // {
-  //   label: '我的播客',
-  //   key: 'my procast',
-  // },
-  // {
-  //   label: '我的收藏',
-  //   key: 'my collection',
-  // },
-  // {
-  //   type: 'group',
-  //   label: '创建的歌单',
-  //   key: 'my music',
-  //   children: [],
-  // },
-  // {
-  //   label: '我喜欢的音乐',
-  //   key: 'my favorite music',
-  // },
 ]
 const router = useRouter()
 function updateValue(key: string) {
@@ -89,6 +36,23 @@ const endBuffer = computed(() =>
 )
 const layoutContent = ref<HTMLElement>()
 provide('layoutContent', layoutContent)
+const { songs } = useSongStore()
+watch(
+  () => songs.length,
+  () => {
+    src.value = `https://music.163.com/song/media/outer/url?id=${
+      songs[songs.length - 1]
+    }.mp3`
+    audio.value?.load()
+    playing.value = false
+    // TODO: watch load
+    new Promise((resolve) => {
+      setTimeout(() => {
+        resolve((playing.value = true))
+      }, 500)
+    })
+  }
+)
 </script>
 
 <template>
@@ -113,50 +77,57 @@ provide('layoutContent', layoutContent)
       bordered
       class="h-20 flex items-center bg-transparent px-2"
     >
+      <div class="flex items-center absolute left-0 bottom-68px w-screen z-10">
+        <slide-scrubber
+          v-model="currentTime"
+          :max="duration"
+          :secondary="endBuffer"
+          class="flex w-full"
+        />
+      </div>
       <n-grid class="h-full" :cols="3">
-        <n-gi class="flex items-center"></n-gi>
-        <n-gi class="flex flex-col items-center justify-center">
-          <div class="flex items-center">
-            <audio ref="audio" />
-            <base-button>
-              <i-bi-skip-start-fill />
-            </base-button>
-            <base-button circle class="mx-8" @click="playing = !playing">
-              <i-carbon-pause-filled v-if="playing" />
-              <i-carbon-play-filled-alt v-else />
-            </base-button>
-            <base-button>
-              <i-bi-skip-end-fill />
-            </base-button>
-          </div>
-          <div class="flex items-center">
-            <span class="flex">{{ formatDuration(currentTime) }}</span>
-            <slide-scrubber
-              v-model="currentTime"
-              :max="duration"
-              :secondary="endBuffer"
-              class="flex w-96 mx-2"
-            />
-            <span class="flex"> {{ formatDuration(duration) }} </span>
-          </div>
+        <n-gi class="flex items-center">{{ songs }}</n-gi>
+        <n-gi class="flex items-center justify-center">
+          <audio ref="audio" />
+          <span class="flex mr-2"></span>
+          <base-button>
+            <i-bi-skip-start-fill />
+          </base-button>
+          <base-button circle class="mx-8" @click="playing = !playing">
+            <i-carbon-pause-filled v-if="playing" />
+            <i-carbon-play-filled-alt v-else />
+          </base-button>
+          <base-button>
+            <i-bi-skip-end-fill />
+          </base-button>
         </n-gi>
         <n-gi class="flex items-center justify-end">
-          <base-button @click="muted = !muted">
-            <i-carbon-volume-mute v-if="muted" />
-            <i-carbon-volume-up v-else />
-          </base-button>
-          <n-slider
-            v-model:value="volume"
-            :step="0.01"
-            :max="1"
-            :format-tooltip="
-              (value:number) => {
-                return Math.floor(value * 100)
-              }
-            "
-            class="w-40 mx-2"
-            :disabled="muted"
-          />
+          <span class="flex mr-2"
+            >{{ formatDuration(currentTime) }} / {{ formatDuration(duration) }}
+          </span>
+          <n-popover trigger="hover">
+            <template #trigger>
+              <base-button @click="muted = !muted">
+                <i-carbon-volume-mute v-if="muted" />
+                <i-carbon-volume-up v-else />
+              </base-button>
+            </template>
+            <div class="h-40 pt-4 pb-10">
+              <n-slider
+                v-model:value="volume"
+                :step="0.01"
+                :max="1"
+                vertical
+                :tooltip="false"
+                :disabled="muted"
+                class="w-40 mx-2"
+              />
+              <div class="flex justify-center mt-2">
+                {{ Math.floor(volume * 100) }}
+              </div>
+            </div>
+          </n-popover>
+
           <base-button>
             <i-ph-playlist />
           </base-button>

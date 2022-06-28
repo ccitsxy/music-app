@@ -4,6 +4,7 @@ import { useFetch } from '@vueuse/core'
 import { h, inject, reactive, ref } from 'vue'
 import type { Ref } from 'vue'
 import { NEl } from 'naive-ui'
+import { useSongStore } from '@/stores/song'
 
 const columns = [
   {
@@ -103,6 +104,16 @@ const columns = [
     width: 100,
   },
 ]
+const { songs } = useSongStore()
+
+const rowProps = (row: { id: string }) => {
+  return {
+    style: 'cursor: pointer;',
+    onDblclick: () => {
+      songs.push(row.id)
+    },
+  }
+}
 const route = useRoute()
 const loading = ref(true)
 const pagination = reactive({
@@ -142,6 +153,7 @@ function onUpdatePage(page: number) {
     <n-data-table
       remote
       :columns="columns"
+      :row-props="rowProps"
       :data="data?.result?.songs"
       :pagination="pagination"
       :loading="loading"

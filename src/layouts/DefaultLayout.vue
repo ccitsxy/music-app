@@ -29,7 +29,6 @@ const themeVars = useThemeVars()
       class="h-16 flex items-center bg-$n-color px-2"
       bordered
     >
-      <base-button circle> </base-button>
       <base-button :disabled="disableBack" @click="$router.go(-1)">
         <i-carbon-chevron-left />
       </base-button>
@@ -81,6 +80,6 @@ const themeVars = useThemeVars()
   background-color: v-bind('themeVars.scrollbarColor');
 }
 .n-layout .n-layout-scroll-container {
-  overflow: overlay;
+  overflow-y: overlay;
 }
 </style>

@@ -24,7 +24,6 @@ provide('theme', theme)
     :theme-overrides="themeOverrides"
     :theme="theme"
     inline-theme-disabled
-    onselectstart="return false"
   >
     <app-router />
   </n-config-provider>

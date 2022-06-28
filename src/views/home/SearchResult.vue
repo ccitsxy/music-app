@@ -11,7 +11,7 @@ const { data } = useFetch(
 </script>
 <template>
   <div>
-    <n-grid x-gap="12" :cols="4" class="mb-4">
+    <n-grid x-gap="12" :cols="2" class="mb-4">
       <n-gi v-for="item in data?.result?.artist" :key="item.id">
         <n-card embedded content-style="display:flex;padding:12px;">
           <img
@@ -69,6 +69,6 @@ const { data } = useFetch(
         </keep-alive>
       </n-tab-pane>
     </n-tabs>
-    <n-back-top :bottom="140" :right="20" />
+    <!-- <n-back-top :bottom="140" :right="20" /> -->
   </div>
 </template>
