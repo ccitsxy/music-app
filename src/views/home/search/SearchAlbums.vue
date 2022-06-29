@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import { useFetch } from '@vueuse/core'
 import { h, inject, reactive, ref } from 'vue'
 import type { Ref } from 'vue'
 import { NEl } from 'naive-ui'
+import { api } from '@/composables/api'
 
 const columns = [
   {
@@ -59,7 +59,7 @@ const columns = [
     },
   },
   {
-    title: '歌曲总数',
+    title: '歌曲',
     key: 'size',
     width: 100,
   },
@@ -74,14 +74,13 @@ const pagination = reactive({
 })
 const url = ref(
   encodeURI(
-    `https://music.ccitsxy.vercel.app/cloudsearch?keywords=${
-      route.params.text
-    }&limit=${pagination.pageSize}&offset=${
-      (pagination.page - 1) * pagination.pageSize
-    }&type=10`
+    `/cloudsearch?keywords=${route.params.text}
+    &limit=${pagination.pageSize}
+    &offset=0
+    &type=10`
   )
 )
-const { data, onFetchResponse } = useFetch(url, { refetch: true }).json()
+const { data, onFetchResponse } = api(url, { refetch: true }).json()
 onFetchResponse(() => {
   pagination.pageCount = Math.ceil(
     data.value?.result?.albumCount / pagination.pageSize
@@ -92,11 +91,10 @@ const layoutContent = inject<Ref<HTMLElement>>('layoutContent')
 function onUpdatePage(page: number) {
   pagination.page = page
   url.value = encodeURI(
-    `https://music.ccitsxy.vercel.app/cloudsearch?keywords=${
-      route.params.text
-    }&limit=${pagination.pageSize}&offset=${
-      (pagination.page - 1) * pagination.pageSize
-    }&type=10`
+    `/cloudsearch?keywords=${route.params.text}
+    &limit=${pagination.pageSize}
+    &offset=${(pagination.page - 1) * pagination.pageSize}
+    &type=10`
   )
   loading.value = true
   layoutContent?.value.scrollTo({ top: 0, behavior: 'smooth' })

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import { useFetch } from '@vueuse/core'
 import { h, inject, reactive, ref } from 'vue'
 import type { Ref } from 'vue'
 import { NEl } from 'naive-ui'
 import { useSongStore } from '@/stores/song'
+import { api } from '@/composables/api'
 
 const columns = [
   {
@@ -12,35 +12,25 @@ const columns = [
     key: 'name',
     render(row: { name: string; alia: string[] }) {
       if (row.alia.length) {
-        return h(
-          'span',
-          {
-            style: { cursor: 'pointer' },
-          },
-          {
-            default: () => [
-              row.name,
-              h(
-                NEl,
-                {
-                  tag: 'span',
-                  style: { color: 'var(--text-color-3)' },
-                },
-                {
-                  default: () => ['（', h('span', null, row.alia), '）'],
-                }
-              ),
-            ],
-          }
-        )
+        return h('span', null, {
+          default: () => [
+            row.name,
+            h(
+              NEl,
+              {
+                tag: 'span',
+                style: { color: 'var(--text-color-3)' },
+              },
+              {
+                default: () => ['（', h('span', null, row.alia), '）'],
+              }
+            ),
+          ],
+        })
       } else {
-        return h(
-          'span',
-          { style: { cursor: 'pointer' } },
-          {
-            default: () => row.name,
-          }
-        )
+        return h('span', null, {
+          default: () => row.name,
+        })
       }
     },
     ellipsis: {
@@ -110,7 +100,7 @@ const rowProps = (row: { id: string }) => {
   return {
     style: 'cursor: pointer;',
     onDblclick: () => {
-      songs.push(row.id)
+      // songs.push(row.id)
     },
   }
 }
@@ -124,12 +114,14 @@ const pagination = reactive({
 })
 const url = ref(
   encodeURI(
-    `https://music.ccitsxy.vercel.app/cloudsearch?keywords=${
-      route.params.text
-    }&limit=${pagination.pageSize}&offset=${pagination.page - 1}`
+    `/cloudsearch?keywords=${route.params.text}
+    &limit=${pagination.pageSize}
+    &offset=0`
   )
 )
-const { data, onFetchResponse } = useFetch(url, { refetch: true }).json()
+
+// const { data, onFetchResponse } = useFetch(url, { refetch: true }).json()
+const { data, onFetchResponse } = api(url, { refetch: true }).json()
 onFetchResponse(() => {
   pagination.pageCount = Math.ceil(
     data.value?.result?.songCount / pagination.pageSize
@@ -140,9 +132,9 @@ const layoutContent = inject<Ref<HTMLElement>>('layoutContent')
 function onUpdatePage(page: number) {
   pagination.page = page
   url.value = encodeURI(
-    `https://music.ccitsxy.vercel.app/cloudsearch?keywords=${
-      route.params.text
-    }&limit=${pagination.pageSize}&offset=${pagination.page - 1}`
+    `/cloudsearch?keywords=${route.params.text}
+    &limit=${pagination.pageSize}
+    &offset=${(pagination.page - 1) * pagination.pageSize}`
   )
   loading.value = true
   layoutContent?.value.scrollTo({ top: 0, behavior: 'smooth' })

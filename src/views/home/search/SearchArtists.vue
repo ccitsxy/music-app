@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import { useFetch } from '@vueuse/core'
 import { h, inject, reactive, ref } from 'vue'
 import type { Ref } from 'vue'
 import { NEl } from 'naive-ui'
+import { api } from '@/composables/api'
 
 const columns = [
   {
-    title: '头像',
+    title: '',
     key: 'image',
     render(row: { img1v1Url: string }) {
       return h('img', {
@@ -59,12 +59,12 @@ const columns = [
     },
   },
   {
-    title: '专辑总数',
+    title: '专辑',
     key: 'albumSize',
     width: 100,
   },
   {
-    title: 'MV总数',
+    title: 'MV',
     key: 'mvSize',
     width: 100,
   },
@@ -79,12 +79,13 @@ const pagination = reactive({
 })
 const url = ref(
   encodeURI(
-    `https://music.ccitsxy.vercel.app/cloudsearch?keywords=${
-      route.params.text
-    }&limit=${pagination.pageSize}&offset=${pagination.page - 1}&type=100`
+    `/cloudsearch?keywords=${route.params.text}
+    &limit=${pagination.pageSize}
+    &offset=0
+    &type=100`
   )
 )
-const { data, onFetchResponse } = useFetch(url, { refetch: true }).json()
+const { data, onFetchResponse } = api(url, { refetch: true }).json()
 onFetchResponse(() => {
   pagination.pageCount = Math.ceil(
     data.value?.result?.artistCount / pagination.pageSize
@@ -95,9 +96,10 @@ const layoutContent = inject<Ref<HTMLElement>>('layoutContent')
 function onUpdatePage(page: number) {
   pagination.page = page
   url.value = encodeURI(
-    `https://music.ccitsxy.vercel.app/cloudsearch?keywords=${
-      route.params.text
-    }&limit=${pagination.pageSize}&offset=${pagination.page - 1}&type=100`
+    `/cloudsearch?keywords=${route.params.text}
+    &limit=${pagination.pageSize}
+    &offset=${(pagination.page - 1) * pagination.pageSize}
+    &type=100`
   )
   loading.value = true
   layoutContent?.value.scrollTo({ top: 0, behavior: 'smooth' })

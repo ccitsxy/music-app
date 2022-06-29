@@ -40,9 +40,9 @@ const { songs } = useSongStore()
 watch(
   () => songs.length,
   () => {
-    src.value = `https://music.163.com/song/media/outer/url?id=${
-      songs[songs.length - 1]
-    }.mp3`
+    // src.value = `https://music.163.com/song/media/outer/url?id=${
+    //   songs[songs.length - 1]
+    // }.mp3`
     audio.value?.load()
     playing.value = false
     // TODO: watch load

@@ -1,7 +1,17 @@
 import { defineStore } from 'pinia'
 
+interface Song {
+  name: string
+  src: string
+  picUrl: string
+  artists: {
+    id: string
+    name: string
+  }[]
+}
+
 interface SongState {
-  songs: string[]
+  songs: Song[]
   currentIndex: number
 }
 
@@ -11,16 +21,5 @@ export const useSongStore = defineStore({
     songs: [],
     currentIndex: 0,
   }),
-  actions: {
-    addCurrentIndex() {
-      if (this.songs.length) {
-        this.currentIndex++
-      }
-    },
-    subCurrentIndex() {
-      if (this.songs.length) {
-        this.currentIndex--
-      }
-    },
-  },
+  actions: {},
 })
