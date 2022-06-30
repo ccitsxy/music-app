@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import { h, inject, reactive, ref } from 'vue'
+import { computed, h, inject, reactive, ref } from 'vue'
 import type { Ref } from 'vue'
 import { NEl } from 'naive-ui'
-import { useSongStore } from '@/stores/song'
+import { useSongStore, type Song } from '@/stores/song'
 import { api } from '@/composables/api'
 
 const columns = [
@@ -94,13 +94,34 @@ const columns = [
     width: 100,
   },
 ]
-const { songs } = useSongStore()
-
+const { songs, addIndex } = useSongStore()
+const currentIndex = computed(() => useSongStore().currentIndex)
 const rowProps = (row: { id: string }) => {
+  const song: Song = {
+    src: '',
+    name: '',
+    picUrl: '',
+    artists: [],
+  }
   return {
     style: 'cursor: pointer;',
     onDblclick: () => {
-      // songs.push(row.id)
+      const { data: url, onFetchFinally: onUrlFetchFinally } = api(
+        `/song/url?id=${row.id}&realIP=222.163.114.55`
+      ).json()
+      onUrlFetchFinally(() => {
+        song.src = url.value.data[0].url
+      })
+      const { data: detail, onFetchFinally: onDetailFetchFinally } = api(
+        `/song/detail?ids=${row.id}`
+      ).json()
+      onDetailFetchFinally(() => {
+        song.name = detail.value.songs[0].name
+        song.picUrl = detail.value.songs[0].al.picUrl
+        song.artists = detail.value.songs[0].ar
+        songs.splice(currentIndex.value, 0, song)
+        addIndex()
+      })
     },
   }
 }
@@ -120,7 +141,6 @@ const url = ref(
   )
 )
 
-// const { data, onFetchResponse } = useFetch(url, { refetch: true }).json()
 const { data, onFetchResponse } = api(url, { refetch: true }).json()
 onFetchResponse(() => {
   pagination.pageCount = Math.ceil(

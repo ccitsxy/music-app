@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 
-interface Song {
-  name: string
+export interface Song {
   src: string
+  name: string
   picUrl: string
   artists: {
     id: string
@@ -21,5 +21,12 @@ export const useSongStore = defineStore({
     songs: [],
     currentIndex: 0,
   }),
-  actions: {},
+  actions: {
+    addIndex() {
+      this.currentIndex++
+    },
+    decIndex() {
+      this.currentIndex--
+    },
+  },
 })

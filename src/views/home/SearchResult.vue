@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import { useFetch } from '@vueuse/core'
+import { api } from '@/composables/api'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
-const { data } = useFetch(
-  encodeURI(
-    `https://music.ccitsxy.vercel.app/search/multimatch?keywords=${route.params.text}`
-  )
+const { data } = api(
+  encodeURI(`/search/multimatch?keywords=${route.params.text}`)
 ).json()
 </script>
 <template>

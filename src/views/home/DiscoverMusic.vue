@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useFetch } from '@vueuse/core'
+import { api } from '@/composables/api'
 
-const { data } = useFetch('https://music.ccitsxy.vercel.app/banner').json()
+const { data } = api('/banner').json()
 </script>
 
 <template>

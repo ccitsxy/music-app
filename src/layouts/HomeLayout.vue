@@ -37,19 +37,18 @@ const endBuffer = computed(() =>
 const layoutContent = ref<HTMLElement>()
 provide('layoutContent', layoutContent)
 const { songs } = useSongStore()
+const currentIndex = computed(() => useSongStore().currentIndex)
 watch(
-  () => songs.length,
+  () => currentIndex.value,
   () => {
-    // src.value = `https://music.163.com/song/media/outer/url?id=${
-    //   songs[songs.length - 1]
-    // }.mp3`
-    audio.value?.load()
     playing.value = false
-    // TODO: watch load
     new Promise((resolve) => {
       setTimeout(() => {
-        resolve((playing.value = true))
+        resolve((src.value = songs[currentIndex.value - 1].src))
       }, 500)
+    })
+    audio.value?.addEventListener('canplay', () => {
+      playing.value = true
     })
   }
 )
@@ -86,7 +85,16 @@ watch(
         />
       </div>
       <n-grid class="h-full" :cols="3">
-        <n-gi class="flex items-center">{{ songs }}</n-gi>
+        <n-gi class="flex items-center">
+          <img
+            v-if="currentIndex"
+            width="64"
+            height="64"
+            :src="`${songs[currentIndex - 1]?.picUrl}?param=256y256`"
+            class="mr-2"
+          />
+          <span>{{ songs[currentIndex - 1]?.name }}</span>
+        </n-gi>
         <n-gi class="flex items-center justify-center">
           <audio ref="audio" />
           <span class="flex mr-2"></span>
