@@ -12,23 +12,23 @@ const router = createRouter({
         {
           path: '/home',
           name: 'home',
-          component: () => import('@/layouts/HomeLayout.vue'),
+          component: () => import('@/layouts/MainLayout.vue'),
           redirect: '/discover',
           children: [
             {
               path: '/discover',
               name: 'discover',
-              component: () => import('@/views/home/DiscoverMusic.vue'),
+              component: () => import('@/views/DiscoverSongs.vue'),
             },
             {
               path: '/podcast',
               name: 'podcast',
-              component: () => import('@/views/home/PodcastView.vue'),
+              component: () => import('@/views/PodcastView.vue'),
             },
             {
               path: '/search/:text',
               name: 'search',
-              component: () => import('@/views/home/SearchResult.vue'),
+              component: () => import('@/views/SearchResult.vue'),
             },
           ],
         },

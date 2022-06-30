@@ -8,7 +8,7 @@ import { api } from '@/composables/api'
 
 const columns = [
   {
-    title: '音乐标题',
+    title: '标题',
     key: 'name',
     render(row: { name: string; alia: string[] }) {
       if (row.alia.length) {
@@ -104,13 +104,14 @@ const rowProps = (row: { id: string }) => {
     artists: [],
   }
   return {
-    style: 'cursor: pointer;',
+    style: 'cursor: default;',
     onDblclick: () => {
       const { data: url, onFetchFinally: onUrlFetchFinally } = api(
         `/song/url?id=${row.id}&realIP=222.163.114.55`
       ).json()
       onUrlFetchFinally(() => {
         song.src = url.value.data[0].url
+        addIndex()
       })
       const { data: detail, onFetchFinally: onDetailFetchFinally } = api(
         `/song/detail?ids=${row.id}`
@@ -120,7 +121,6 @@ const rowProps = (row: { id: string }) => {
         song.picUrl = detail.value.songs[0].al.picUrl
         song.artists = detail.value.songs[0].ar
         songs.splice(currentIndex.value, 0, song)
-        addIndex()
       })
     },
   }

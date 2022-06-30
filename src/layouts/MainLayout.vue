@@ -3,7 +3,7 @@ import { computed, provide, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 import type { MenuOption } from 'naive-ui'
-import { useMediaControls } from '@vueuse/core'
+import { useMediaControls, useTitle } from '@vueuse/core'
 
 import { useSongStore } from '@/stores/song'
 
@@ -39,13 +39,14 @@ provide('layoutContent', layoutContent)
 const { songs } = useSongStore()
 const currentIndex = computed(() => useSongStore().currentIndex)
 watch(
-  () => currentIndex.value,
-  () => {
-    playing.value = false
-    new Promise((resolve) => {
-      setTimeout(() => {
-        resolve((src.value = songs[currentIndex.value - 1].src))
-      }, 500)
+  () => songs[currentIndex.value - 1],
+  (newVal) => {
+    if (newVal?.src == null) return
+    console.log(newVal?.src)
+    src.value = newVal?.src
+    useTitle(newVal?.name)
+    audio.value?.addEventListener('loadstart', () => {
+      playing.value = false
     })
     audio.value?.addEventListener('canplay', () => {
       playing.value = true
@@ -76,7 +77,10 @@ watch(
       bordered
       class="h-20 flex items-center bg-transparent px-2"
     >
-      <div class="flex items-center absolute left-0 bottom-68px w-screen z-10">
+      <div
+        v-if="currentTime"
+        class="flex items-center absolute left-0 bottom-68px w-screen z-10"
+      >
         <slide-scrubber
           v-model="currentTime"
           :max="duration"
@@ -84,18 +88,18 @@ watch(
           class="flex w-full"
         />
       </div>
-      <n-grid class="h-full" :cols="3">
-        <n-gi class="flex items-center">
+      <n-grid class="h-full" :cols="5">
+        <n-gi span="2" class="flex items-center">
           <img
             v-if="currentIndex"
             width="64"
             height="64"
             :src="`${songs[currentIndex - 1]?.picUrl}?param=256y256`"
-            class="mr-2"
+            class="flex mr-2"
           />
-          <span>{{ songs[currentIndex - 1]?.name }}</span>
+          <span class="flex mr-4">{{ songs[currentIndex - 1]?.name }}</span>
         </n-gi>
-        <n-gi class="flex items-center justify-center">
+        <n-gi span="1" class="flex items-center justify-center">
           <audio ref="audio" />
           <span class="flex mr-2"></span>
           <base-button>
@@ -109,33 +113,25 @@ watch(
             <i-bi-skip-end-fill />
           </base-button>
         </n-gi>
-        <n-gi class="flex items-center justify-end">
-          <span class="flex mr-2"
-            >{{ formatDuration(currentTime) }} / {{ formatDuration(duration) }}
+        <n-gi span="2" class="flex items-center justify-end">
+          <span v-if="currentTime" class="flex mr-2">
+            {{ formatDuration(currentTime) }} / {{ formatDuration(duration) }}
           </span>
-          <n-popover trigger="hover">
-            <template #trigger>
-              <base-button @click="muted = !muted">
-                <i-carbon-volume-mute v-if="muted" />
-                <i-carbon-volume-up v-else />
-              </base-button>
-            </template>
-            <div class="h-40 pt-4 pb-10">
-              <n-slider
-                v-model:value="volume"
-                :step="0.01"
-                :max="1"
-                vertical
-                :tooltip="false"
-                :disabled="muted"
-                class="w-40 mx-2"
-              />
-              <div class="flex justify-center mt-2">
-                {{ Math.floor(volume * 100) }}
-              </div>
-            </div>
-          </n-popover>
-
+          <base-button ref="trigger" @click="muted = !muted">
+            <i-carbon-volume-mute v-if="muted" />
+            <i-carbon-volume-up v-else />
+          </base-button>
+          <n-slider
+            v-model:value="volume"
+            ref="slider"
+            :step="0.01"
+            :max="1"
+            :disabled="muted"
+            :format-tooltip="(value: number) => {
+              return value * 100
+            }"
+            class="w-40 mx-2"
+          />
           <base-button>
             <i-ph-playlist />
           </base-button>
