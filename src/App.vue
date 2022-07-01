@@ -5,6 +5,7 @@ import type { GlobalThemeOverrides } from 'naive-ui'
 
 onMounted(() => {
   appWindow.show()
+  appWindow.setFocus()
 })
 
 const themeOverrides: GlobalThemeOverrides = {
@@ -24,6 +25,8 @@ provide('theme', theme)
     :theme-overrides="themeOverrides"
     :theme="theme"
     inline-theme-disabled
+    onselectstart="return false"
+    ondragstart="return false"
   >
     <app-router />
   </n-config-provider>

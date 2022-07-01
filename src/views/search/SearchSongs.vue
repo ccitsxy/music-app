@@ -67,13 +67,9 @@ const columns = [
     title: '专辑',
     key: 'al',
     render(row: { al: { name: string } }) {
-      return h(
-        'span',
-        { style: { cursor: 'pointer' } },
-        {
-          default: () => row.al.name,
-        }
-      )
+      return h('span', null, {
+        default: () => row.al.name,
+      })
     },
     ellipsis: {
       tooltip: true,
@@ -112,6 +108,7 @@ const rowProps = (row: { id: string }) => {
       onUrlFetchFinally(() => {
         song.src = url.value.data[0].url
         addIndex()
+        console.log(song.src)
       })
       const { data: detail, onFetchFinally: onDetailFetchFinally } = api(
         `/song/detail?ids=${row.id}`

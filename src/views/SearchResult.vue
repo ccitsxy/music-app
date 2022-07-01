@@ -51,7 +51,7 @@ const { data } = api(
     </n-grid>
 
     <n-tabs>
-      <n-tab-pane name="single" tab="单曲">
+      <n-tab-pane name="song" tab="单曲">
         <keep-alive>
           <search-songs />
         </keep-alive>
@@ -66,6 +66,7 @@ const { data } = api(
           <search-albums />
         </keep-alive>
       </n-tab-pane>
+      <n-tab-pane name="mv" tab="MV"></n-tab-pane>
     </n-tabs>
     <!-- <n-back-top :bottom="140" :right="20" /> -->
   </div>

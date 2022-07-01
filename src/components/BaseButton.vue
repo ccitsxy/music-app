@@ -19,7 +19,7 @@ defineProps({
         ? 'rounded-full p-3 bg-$hover-color hover:bg-$button-color-2-hover'
         : 'rounded px-4 py-2 bg-transparent hover:bg-$hover-color',
       disabled
-        ? 'cursor-not-allowed opacity-50 hover:bg-transparent'
+        ? 'pointer-events-none opacity-50 hover:bg-transparent'
         : 'cursor-pointer',
     ]"
   >

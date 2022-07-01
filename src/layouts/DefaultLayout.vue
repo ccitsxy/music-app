@@ -3,7 +3,6 @@ import { appWindow } from '@tauri-apps/api/window'
 import { useThemeVars, darkTheme } from 'naive-ui'
 import { inject, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import BaseButton from '../components/BaseButton.vue'
 
 const theme = inject('theme')
 const searchText = ref('')
@@ -23,7 +22,7 @@ watch(
 const themeVars = useThemeVars()
 </script>
 <template>
-  <n-layout class="h-full">
+  <n-layout class="h-full w-100vw">
     <n-layout-header
       data-tauri-drag-region
       class="h-16 flex items-center bg-$n-color px-2"
@@ -71,15 +70,21 @@ const themeVars = useThemeVars()
 </template>
 
 <style>
-::-webkit-scrollbar {
+.n-layout .n-layout-scroll-container {
+  overflow-y: overlay;
+}
+
+.n-layout .n-layout-scroll-container ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
   background-color: transparent;
 }
-::-webkit-scrollbar-thumb {
+
+.n-layout .n-layout-scroll-container ::-webkit-scrollbar-thumb {
   background-color: v-bind('themeVars.scrollbarColor');
 }
-.n-layout .n-layout-scroll-container {
-  overflow-y: overlay;
+
+.n-layout .n-layout-scroll-container ::-webkit-scrollbar-thumb:hover {
+  background-color: v-bind('themeVars.scrollbarColorHover');
 }
 </style>

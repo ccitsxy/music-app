@@ -36,13 +36,12 @@ const endBuffer = computed(() =>
 )
 const layoutContent = ref<HTMLElement>()
 provide('layoutContent', layoutContent)
-const { songs } = useSongStore()
+const { songs, addIndex, decIndex } = useSongStore()
 const currentIndex = computed(() => useSongStore().currentIndex)
 watch(
   () => songs[currentIndex.value - 1],
   (newVal) => {
     if (newVal?.src == null) return
-    console.log(newVal?.src)
     src.value = newVal?.src
     useTitle(newVal?.name)
     audio.value?.addEventListener('loadstart', () => {
@@ -53,6 +52,7 @@ watch(
     })
   }
 )
+const showSongList = ref(false)
 </script>
 
 <template>
@@ -71,6 +71,7 @@ watch(
             <component :is="Component" :key="route.fullPath" />
           </keep-alive>
         </router-view>
+        <n-drawer :show="showSongList" :show-mask="'transparent'"></n-drawer>
       </n-layout-content>
     </n-layout>
     <n-layout-footer
@@ -91,25 +92,45 @@ watch(
       <n-grid class="h-full" :cols="5">
         <n-gi span="2" class="flex items-center">
           <img
-            v-if="currentIndex"
+            v-if="songs[currentIndex - 1]?.picUrl"
             width="64"
             height="64"
             :src="`${songs[currentIndex - 1]?.picUrl}?param=256y256`"
             class="flex mr-2"
           />
-          <span class="flex mr-4">{{ songs[currentIndex - 1]?.name }}</span>
+          <div>
+            <div class="flex flex-row mr-4 font-bold">
+              {{ songs[currentIndex - 1]?.name }}
+            </div>
+            <div class="flex items-center mr-4">
+              <span
+                v-for="item in songs[currentIndex - 1]?.artists"
+                :key="item.id"
+              >
+                {{ item?.name }}
+              </span>
+            </div>
+          </div>
         </n-gi>
         <n-gi span="1" class="flex items-center justify-center">
           <audio ref="audio" />
           <span class="flex mr-2"></span>
-          <base-button>
+          <base-button @click="decIndex()" :disabled="currentIndex <= 1">
             <i-bi-skip-start-fill />
           </base-button>
-          <base-button circle class="mx-8" @click="playing = !playing">
+          <base-button
+            circle
+            class="mx-8"
+            @click="playing = !playing"
+            :disabled="songs.length === 0"
+          >
             <i-carbon-pause-filled v-if="playing" />
             <i-carbon-play-filled-alt v-else />
           </base-button>
-          <base-button>
+          <base-button
+            @click="addIndex()"
+            :disabled="currentIndex === songs.length || songs.length === 0"
+          >
             <i-bi-skip-end-fill />
           </base-button>
         </n-gi>
@@ -128,11 +149,11 @@ watch(
             :max="1"
             :disabled="muted"
             :format-tooltip="(value: number) => {
-              return value * 100
+              return Math.floor(value * 100)
             }"
             class="w-40 mx-2"
           />
-          <base-button>
+          <base-button @click="showSongList = true">
             <i-ph-playlist />
           </base-button>
         </n-gi>
