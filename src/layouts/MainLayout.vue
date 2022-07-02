@@ -115,10 +115,15 @@ const showSongList = ref(false)
         <n-gi span="1" class="flex items-center justify-center">
           <audio ref="audio" />
           <span class="flex mr-2"></span>
-          <base-button @click="decIndex()" :disabled="currentIndex <= 1">
+          <n-button
+            quaternary
+            @click="decIndex()"
+            :disabled="currentIndex <= 1"
+          >
             <i-bi-skip-start-fill />
-          </base-button>
-          <base-button
+          </n-button>
+          <n-button
+            quaternary
             circle
             class="mx-8"
             @click="playing = !playing"
@@ -126,22 +131,23 @@ const showSongList = ref(false)
           >
             <i-carbon-pause-filled v-if="playing" />
             <i-carbon-play-filled-alt v-else />
-          </base-button>
-          <base-button
+          </n-button>
+          <n-button
+            quaternary
             @click="addIndex()"
             :disabled="currentIndex === songs.length || songs.length === 0"
           >
             <i-bi-skip-end-fill />
-          </base-button>
+          </n-button>
         </n-gi>
         <n-gi span="2" class="flex items-center justify-end">
           <span v-if="currentTime" class="flex mr-2">
             {{ formatDuration(currentTime) }} / {{ formatDuration(duration) }}
           </span>
-          <base-button ref="trigger" @click="muted = !muted">
+          <n-button quaternary ref="trigger" @click="muted = !muted">
             <i-carbon-volume-mute v-if="muted" />
             <i-carbon-volume-up v-else />
-          </base-button>
+          </n-button>
           <n-slider
             v-model:value="volume"
             ref="slider"
@@ -153,9 +159,9 @@ const showSongList = ref(false)
             }"
             class="w-40 mx-2"
           />
-          <base-button @click="showSongList = true">
+          <n-button quaternary @click="showSongList = true">
             <i-ph-playlist />
-          </base-button>
+          </n-button>
         </n-gi>
       </n-grid>
     </n-layout-footer>

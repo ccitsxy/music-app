@@ -28,12 +28,12 @@ const themeVars = useThemeVars()
       class="h-16 flex items-center bg-$n-color px-2"
       bordered
     >
-      <base-button :disabled="disableBack" @click="$router.go(-1)">
+      <n-button quaternary :disabled="disableBack" @click="$router.go(-1)">
         <i-carbon-chevron-left />
-      </base-button>
-      <base-button :disabled="disableForward" @click="$router.go(1)">
+      </n-button>
+      <n-button quaternary :disabled="disableForward" @click="$router.go(1)">
         <i-carbon-chevron-right />
-      </base-button>
+      </n-button>
       <n-input
         v-model:value="searchText"
         placeholder="搜索"
@@ -45,22 +45,22 @@ const themeVars = useThemeVars()
         </template>
       </n-input>
       <div class="flex-1" />
-      <base-button v-if="theme" @click="theme = null">
+      <n-button quaternary v-if="theme" @click="theme = null">
         <i-carbon-moon />
-      </base-button>
-      <base-button v-else @click="theme = darkTheme">
+      </n-button>
+      <n-button quaternary v-else @click="theme = darkTheme">
         <i-carbon-sun />
-      </base-button>
-      <base-button @click="appWindow.minimize()">
+      </n-button>
+      <n-button quaternary :focusable="false" @click="appWindow.minimize()">
         <i-codicon-chrome-minimize />
-      </base-button>
-      <base-button @click="appWindow.toggleMaximize()">
+      </n-button>
+      <n-button quaternary @click="appWindow.toggleMaximize()">
         <i-codicon-chrome-maximize />
         <!-- <i-codicon-chrome-restore /> -->
-      </base-button>
-      <base-button @click="appWindow.close()">
+      </n-button>
+      <n-button quaternary @click="appWindow.close()">
         <i-codicon-chrome-close />
-      </base-button>
+      </n-button>
     </n-layout-header>
 
     <n-layout-content class="h-[calc(100vh-4rem)]">
