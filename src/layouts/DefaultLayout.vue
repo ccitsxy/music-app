@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { appWindow } from '@tauri-apps/api/window'
 import { useThemeVars, darkTheme } from 'naive-ui'
-import { inject, ref, watch } from 'vue'
+import type { GlobalTheme } from 'naive-ui'
+import { computed, inject, ref, watch } from 'vue'
+import type { Ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-const theme = inject('theme')
+const theme = inject<Ref<GlobalTheme | null | undefined>>('theme')
 const searchText = ref('')
 const disableBack = ref(true)
 const disableForward = ref(true)
@@ -20,9 +22,10 @@ watch(
   }
 )
 const themeVars = useThemeVars()
+const colorScheme = computed(() => (theme?.value ? 'dark' : 'light'))
 </script>
 <template>
-  <n-layout class="h-full w-100vw">
+  <n-layout>
     <n-layout-header
       data-tauri-drag-region
       class="h-16 flex items-center bg-$n-color px-2"
@@ -45,31 +48,48 @@ const themeVars = useThemeVars()
         </template>
       </n-input>
       <div class="flex-1" />
-      <n-button quaternary v-if="theme" @click="theme = null">
+      <n-button
+        v-if="theme"
+        quaternary
+        :focusable="false"
+        @click="theme = null"
+      >
         <i-carbon-moon />
       </n-button>
-      <n-button quaternary v-else @click="theme = darkTheme">
+      <n-button v-else quaternary :focusable="false" @click="theme = darkTheme">
         <i-carbon-sun />
       </n-button>
       <n-button quaternary :focusable="false" @click="appWindow.minimize()">
         <i-codicon-chrome-minimize />
       </n-button>
-      <n-button quaternary @click="appWindow.toggleMaximize()">
+      <n-button
+        quaternary
+        :focusable="false"
+        @click="appWindow.toggleMaximize()"
+      >
         <i-codicon-chrome-maximize />
         <!-- <i-codicon-chrome-restore /> -->
       </n-button>
-      <n-button quaternary @click="appWindow.close()">
+      <n-button quaternary :focusable="false" @click="appWindow.close()">
         <i-codicon-chrome-close />
       </n-button>
     </n-layout-header>
 
-    <n-layout-content class="h-[calc(100vh-4rem)]">
+    <n-layout-content>
       <router-view />
     </n-layout-content>
   </n-layout>
 </template>
 
 <style>
+body {
+  overflow: hidden;
+}
+
+:root {
+  color-scheme: v-bind('colorScheme');
+}
+
 .n-layout .n-layout-scroll-container {
   overflow-y: overlay;
 }
@@ -86,5 +106,8 @@ const themeVars = useThemeVars()
 
 .n-layout .n-layout-scroll-container ::-webkit-scrollbar-thumb:hover {
   background-color: v-bind('themeVars.scrollbarColorHover');
+}
+.n-popover__content {
+  cursor: default;
 }
 </style>

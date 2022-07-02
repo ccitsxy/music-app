@@ -55,7 +55,7 @@ const columns = [
               default: () => element.name,
             }
           ),
-          row.ar.length - 1 === row.ar.indexOf(element) ? '' : '/',
+          row.ar.length - 1 === row.ar.indexOf(element) ? '' : '/ ',
         ]
       })
     },
@@ -96,29 +96,28 @@ const rowProps = (row: { id: string }) => {
   const song: Song = {
     src: '',
     name: '',
+    alia: [],
     picUrl: '',
     artists: [],
   }
   return {
     style: 'cursor: default;',
     onDblclick: () => {
-      const { data: url, onFetchFinally: onUrlFetchFinally } = api(
-        `/song/url?id=${row.id}&realIP=222.163.114.55`
-      ).json()
-      onUrlFetchFinally(() => {
-        song.src = url.value.data[0].url
-        addIndex()
-        console.log(song.src)
-      })
-      const { data: detail, onFetchFinally: onDetailFetchFinally } = api(
-        `/song/detail?ids=${row.id}`
-      ).json()
-      onDetailFetchFinally(() => {
-        song.name = detail.value.songs[0].name
-        song.picUrl = detail.value.songs[0].al.picUrl
-        song.artists = detail.value.songs[0].ar
-        songs.splice(currentIndex.value, 0, song)
-      })
+      api(`/song/url?id=${row.id}`)
+        .json()
+        .then((result) => {
+          song.src = result.data.value.data[0].url
+          api(`/song/detail?ids=${row.id}`)
+            .json()
+            .then((result) => {
+              song.name = result.data.value.songs[0].name
+              song.picUrl = result.data.value.songs[0].al.picUrl
+              song.artists = result.data.value.songs[0].ar
+              song.alia = result.data.value.songs[0].alia
+              songs.splice(currentIndex.value, 0, song)
+              addIndex()
+            })
+        })
     },
   }
 }

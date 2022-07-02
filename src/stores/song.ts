@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 export interface Song {
   src: string
   name: string
+  alia: string[]
   picUrl: string
   artists: {
     id: string

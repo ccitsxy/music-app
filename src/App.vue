@@ -4,6 +4,12 @@ import { appWindow } from '@tauri-apps/api/window'
 import type { GlobalThemeOverrides } from 'naive-ui'
 
 onMounted(() => {
+  window.onselectstart = () => {
+    return false
+  }
+  window.ondragstart = () => {
+    return false
+  }
   appWindow.show()
   appWindow.setFocus()
 })
@@ -16,7 +22,6 @@ const themeOverrides: GlobalThemeOverrides = {
     primaryColorSuppl: '#ff4d4f',
   },
 }
-
 const theme = ref(null)
 provide('theme', theme)
 </script>
@@ -25,8 +30,6 @@ provide('theme', theme)
     :theme-overrides="themeOverrides"
     :theme="theme"
     inline-theme-disabled
-    onselectstart="return false"
-    ondragstart="return false"
   >
     <app-router />
   </n-config-provider>

@@ -39,17 +39,19 @@ provide('layoutContent', layoutContent)
 const { songs, addIndex, decIndex } = useSongStore()
 const currentIndex = computed(() => useSongStore().currentIndex)
 watch(
-  () => songs[currentIndex.value - 1],
+  () => currentIndex.value,
   (newVal) => {
-    if (newVal?.src == null) return
-    src.value = newVal?.src
-    useTitle(newVal?.name)
+    console.log(newVal)
+    src.value = songs[currentIndex.value - 1].src
+    audio.value?.load()
+    useTitle(songs[currentIndex.value - 1].name)
     audio.value?.addEventListener('loadstart', () => {
       playing.value = false
     })
     audio.value?.addEventListener('canplay', () => {
       playing.value = true
     })
+    console.log(songs[currentIndex.value - 1].src)
   }
 )
 const showSongList = ref(false)
@@ -71,7 +73,6 @@ const showSongList = ref(false)
             <component :is="Component" :key="route.fullPath" />
           </keep-alive>
         </router-view>
-        <n-drawer :show="showSongList" :show-mask="'transparent'"></n-drawer>
       </n-layout-content>
     </n-layout>
     <n-layout-footer
@@ -79,7 +80,7 @@ const showSongList = ref(false)
       class="h-20 flex items-center bg-transparent px-2"
     >
       <div
-        v-if="currentTime"
+        v-if="currentIndex"
         class="flex items-center absolute left-0 bottom-68px w-screen z-10"
       >
         <slide-scrubber
@@ -99,15 +100,30 @@ const showSongList = ref(false)
             class="flex mr-2"
           />
           <div>
-            <div class="flex flex-row mr-4 font-bold">
-              {{ songs[currentIndex - 1]?.name }}
+            <div class="flex items-center flex-row mr-4">
+              <span class="font-bold flex">
+                {{ songs[currentIndex - 1]?.name }}
+              </span>
+              <n-el
+                v-if="songs[currentIndex - 1]?.alia[0]"
+                tag="span"
+                class="text-$text-color-3 flex"
+              >
+                （{{ songs[currentIndex - 1]?.alia[0] }}）
+              </n-el>
             </div>
             <div class="flex items-center mr-4">
               <span
                 v-for="item in songs[currentIndex - 1]?.artists"
                 :key="item.id"
               >
-                {{ item?.name }}
+                <n-ellipsis>{{ item?.name }}</n-ellipsis>
+                {{
+                  songs[currentIndex - 1]?.artists.length - 1 ===
+                  songs[currentIndex - 1]?.artists.indexOf(item)
+                    ? ''
+                    : '/'
+                }}&nbsp;
               </span>
             </div>
           </div>
@@ -117,34 +133,43 @@ const showSongList = ref(false)
           <span class="flex mr-2"></span>
           <n-button
             quaternary
+            :focusable="false"
             @click="decIndex()"
             :disabled="currentIndex <= 1"
           >
             <i-bi-skip-start-fill />
           </n-button>
           <n-button
-            quaternary
+            secondary
+            :focusable="false"
             circle
+            :disabled="songs.length === 0"
+            size="large"
             class="mx-8"
             @click="playing = !playing"
-            :disabled="songs.length === 0"
           >
             <i-carbon-pause-filled v-if="playing" />
             <i-carbon-play-filled-alt v-else />
           </n-button>
           <n-button
             quaternary
-            @click="addIndex()"
+            :focusable="false"
             :disabled="currentIndex === songs.length || songs.length === 0"
+            @click="addIndex()"
           >
             <i-bi-skip-end-fill />
           </n-button>
         </n-gi>
         <n-gi span="2" class="flex items-center justify-end">
-          <span v-if="currentTime" class="flex mr-2">
+          <span v-if="currentIndex" class="flex mr-2">
             {{ formatDuration(currentTime) }} / {{ formatDuration(duration) }}
           </span>
-          <n-button quaternary ref="trigger" @click="muted = !muted">
+          <n-button
+            quaternary
+            :focusable="false"
+            ref="trigger"
+            @click="muted = !muted"
+          >
             <i-carbon-volume-mute v-if="muted" />
             <i-carbon-volume-up v-else />
           </n-button>
@@ -159,9 +184,18 @@ const showSongList = ref(false)
             }"
             class="w-40 mx-2"
           />
-          <n-button quaternary @click="showSongList = true">
+          <n-button quaternary :focusable="false" @click="showSongList = true">
             <i-ph-playlist />
           </n-button>
+          <n-drawer
+            :show="showSongList"
+            :z-index="10"
+            :trap-focus="false"
+            :block-scroll="false"
+            @update:show="showSongList = false"
+          >
+            <n-button>1</n-button>
+          </n-drawer>
         </n-gi>
       </n-grid>
     </n-layout-footer>
