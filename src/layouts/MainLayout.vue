@@ -40,8 +40,7 @@ const { songs, addIndex, decIndex } = useSongStore()
 const currentIndex = computed(() => useSongStore().currentIndex)
 watch(
   () => currentIndex.value,
-  (newVal) => {
-    console.log(newVal)
+  () => {
     src.value = songs[currentIndex.value - 1].src
     audio.value?.load()
     useTitle(songs[currentIndex.value - 1].name)
@@ -51,7 +50,6 @@ watch(
     audio.value?.addEventListener('canplay', () => {
       playing.value = true
     })
-    console.log(songs[currentIndex.value - 1].src)
   }
 )
 const showSongList = ref(false)

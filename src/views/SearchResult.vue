@@ -12,7 +12,7 @@ const { data } = useFetch(
   <div>
     <n-grid x-gap="12" :cols="2" class="mb-4">
       <n-gi v-for="item in data?.result?.artist" :key="item.id">
-        <n-card embedded content-style="display:flex;padding:12px;">
+        <n-card embedded content-style="display: flex;padding: 12px;">
           <img
             :src="`${item.img1v1Url}?param=256y256`"
             width="48"

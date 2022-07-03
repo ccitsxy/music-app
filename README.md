@@ -1,6 +1,6 @@
 # music-app
 
-Music App. Tauri + Vite + Vue + NaiveUI + Windicss.
+Music App. Tauri + Vite + Vue + Naive UI + Windi CSS.
 
 ## Recommended IDE Setup
 
@@ -39,9 +39,14 @@ npm run dev
 npm run build
 ```
 
+### Run Unit Tests with [Vitest](https://vitest.dev/)
+
+```sh
+npm run test:unit
+```
+
 ### Lint with [ESLint](https://eslint.org/)
 
 ```sh
 npm run lint
 ```
- 

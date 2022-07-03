@@ -47,6 +47,9 @@ const themeVars = useThemeVars()
         </template>
       </n-input>
       <div class="flex-1" />
+      <n-button quaternary :focusable="false">
+        <i-carbon-settings @click="$router.push('/settings')" />
+      </n-button>
       <n-button
         v-if="theme"
         quaternary

@@ -30,6 +30,11 @@ const router = createRouter({
               name: 'search',
               component: () => import('@/views/SearchResult.vue'),
             },
+            {
+              path: '/settings',
+              name: 'settings',
+              component: () => import('@/views/UserSettings.vue'),
+            },
           ],
         },
       ],
