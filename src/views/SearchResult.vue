@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { api } from '@/composables/api'
 import { useRoute } from 'vue-router'
 
+import { useFetch } from '@/composables/useFetch'
+
 const route = useRoute()
-const { data } = api(
+const { data } = useFetch(
   encodeURI(`/search/multimatch?keywords=${route.params.text}`)
 ).json()
 </script>
@@ -52,21 +53,17 @@ const { data } = api(
 
     <n-tabs>
       <n-tab-pane name="song" tab="单曲">
-        <keep-alive>
-          <search-songs />
-        </keep-alive>
+        <search-songs />
       </n-tab-pane>
       <n-tab-pane name="singer" tab="歌手">
-        <keep-alive>
-          <search-artists />
-        </keep-alive>
+        <search-artists />
       </n-tab-pane>
       <n-tab-pane name="album" tab="专辑">
-        <keep-alive>
-          <search-albums />
-        </keep-alive>
+        <search-albums />
       </n-tab-pane>
-      <n-tab-pane name="mv" tab="MV"></n-tab-pane>
+      <n-tab-pane name="mv" tab="MV">
+        <search-mvs />
+      </n-tab-pane>
     </n-tabs>
     <!-- <n-back-top :bottom="140" :right="20" /> -->
   </div>

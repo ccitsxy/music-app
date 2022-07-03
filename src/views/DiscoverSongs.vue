@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { api } from '@/composables/api'
+import { useFetch } from '@/composables/useFetch'
 
-const { data } = api('/banner').json()
+const { data } = useFetch('/banner').json()
 </script>
 
 <template>
@@ -19,7 +19,10 @@ const { data } = api('/banner').json()
           :key="item.imageUrl"
           :style="{ width: '40%' }"
         >
-          <img class="carousel-img" :src="item.imageUrl" />
+          <img
+            class="w-full h-full mx-0 my-auto object-scale-down"
+            :src="item.imageUrl"
+          />
           <n-el
             class="text-white bg-$primary-color text-xs absolute right-0 bottom-0 p-1"
           >
@@ -30,12 +33,3 @@ const { data } = api('/banner').json()
     </n-spin>
   </div>
 </template>
-
-<style scoped>
-.carousel-img {
-  margin: 0 auto;
-  width: 100%;
-  height: 100%;
-  object-fit: scale-down;
-}
-</style>

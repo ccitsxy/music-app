@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { useRoute } from 'vue-router'
 import { h, inject, reactive, ref } from 'vue'
 import type { Ref } from 'vue'
+import { useRoute } from 'vue-router'
+
 import { NEl } from 'naive-ui'
-import { api } from '@/composables/api'
+import { useFetch } from '@/composables/useFetch'
 
 const columns = [
   {
@@ -85,14 +86,14 @@ const url = ref(
     &type=100`
   )
 )
-const { data, onFetchResponse } = api(url, { refetch: true }).json()
+const { data, onFetchResponse } = useFetch(url, { refetch: true }).json()
 onFetchResponse(() => {
   pagination.pageCount = Math.ceil(
-    data.value?.result?.artistCount / pagination.pageSize
+    data.value?.result.artistCount / pagination.pageSize
   )
   loading.value = false
 })
-const layoutContent = inject<Ref<HTMLElement>>('layoutContent')
+const layoutContent = inject('layoutContent') as Ref<HTMLElement>
 function onUpdatePage(page: number) {
   pagination.page = page
   url.value = encodeURI(
@@ -102,7 +103,7 @@ function onUpdatePage(page: number) {
     &type=100`
   )
   loading.value = true
-  layoutContent?.value.scrollTo({ top: 0, behavior: 'smooth' })
+  layoutContent.value.scrollTo({ top: 0, behavior: 'smooth' })
 }
 </script>
 <template>
@@ -110,7 +111,7 @@ function onUpdatePage(page: number) {
     <n-data-table
       remote
       :columns="columns"
-      :data="data?.result?.artists"
+      :data="data?.result.artists"
       :pagination="pagination"
       :loading="loading"
       striped

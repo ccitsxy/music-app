@@ -2,7 +2,7 @@
 import { appWindow } from '@tauri-apps/api/window'
 import { useThemeVars, darkTheme } from 'naive-ui'
 import type { GlobalTheme } from 'naive-ui'
-import { computed, inject, ref, watch } from 'vue'
+import { inject, ref, watch } from 'vue'
 import type { Ref } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -22,7 +22,6 @@ watch(
   }
 )
 const themeVars = useThemeVars()
-const colorScheme = computed(() => (theme?.value ? 'dark' : 'light'))
 </script>
 <template>
   <n-layout>
@@ -84,10 +83,6 @@ const colorScheme = computed(() => (theme?.value ? 'dark' : 'light'))
 <style>
 body {
   overflow: hidden;
-}
-
-:root {
-  color-scheme: v-bind('colorScheme');
 }
 
 .n-layout .n-layout-scroll-container {

@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { useRoute } from 'vue-router'
 import { computed, h, inject, reactive, ref } from 'vue'
 import type { Ref } from 'vue'
+import { useRoute } from 'vue-router'
+
 import { NEl } from 'naive-ui'
-import { useSongStore, type Song } from '@/stores/song'
-import { api } from '@/composables/api'
+import { useSongStore } from '@/stores/song'
+import type { Song } from '@/stores/song'
+import { useFetch } from '@/composables/useFetch'
 
 const columns = [
   {
@@ -47,7 +49,6 @@ const columns = [
             'span',
             {
               style: {
-                marginRight: '4px',
                 cursor: 'pointer',
               },
             },
@@ -55,7 +56,7 @@ const columns = [
               default: () => element.name,
             }
           ),
-          row.ar.length - 1 === row.ar.indexOf(element) ? '' : '/ ',
+          row.ar.length - 1 === row.ar.indexOf(element) ? '' : ' / ',
         ]
       })
     },
@@ -103,11 +104,11 @@ const rowProps = (row: { id: string }) => {
   return {
     style: 'cursor: default;',
     onDblclick: () => {
-      api(`/song/url?id=${row.id}`)
+      useFetch(`/song/url?id=${row.id}`)
         .json()
         .then((result) => {
           song.src = result.data.value.data[0].url
-          api(`/song/detail?ids=${row.id}`)
+          useFetch(`/song/detail?ids=${row.id}`)
             .json()
             .then((result) => {
               song.name = result.data.value.songs[0].name
@@ -137,14 +138,14 @@ const url = ref(
   )
 )
 
-const { data, onFetchResponse } = api(url, { refetch: true }).json()
+const { data, onFetchResponse } = useFetch(url, { refetch: true }).json()
 onFetchResponse(() => {
   pagination.pageCount = Math.ceil(
-    data.value?.result?.songCount / pagination.pageSize
+    data.value?.result.songCount / pagination.pageSize
   )
   loading.value = false
 })
-const layoutContent = inject<Ref<HTMLElement>>('layoutContent')
+const layoutContent = inject('layoutContent') as Ref<HTMLElement>
 function onUpdatePage(page: number) {
   pagination.page = page
   url.value = encodeURI(
@@ -153,7 +154,7 @@ function onUpdatePage(page: number) {
     &offset=${(pagination.page - 1) * pagination.pageSize}`
   )
   loading.value = true
-  layoutContent?.value.scrollTo({ top: 0, behavior: 'smooth' })
+  layoutContent.value.scrollTo({ top: 0, behavior: 'smooth' })
 }
 </script>
 <template>
@@ -162,7 +163,7 @@ function onUpdatePage(page: number) {
       remote
       :columns="columns"
       :row-props="rowProps"
-      :data="data?.result?.songs"
+      :data="data?.result.songs"
       :pagination="pagination"
       :loading="loading"
       striped

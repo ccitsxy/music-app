@@ -69,9 +69,7 @@ const showSongList = ref(false)
       </n-layout-sider>
       <n-layout-content ref="layoutContent" content-style="padding: 24px">
         <router-view v-slot="{ Component, route }">
-          <keep-alive>
-            <component :is="Component" :key="route.fullPath" />
-          </keep-alive>
+          <component :is="Component" :key="route.fullPath" />
         </router-view>
       </n-layout-content>
     </n-layout>
@@ -100,7 +98,7 @@ const showSongList = ref(false)
             class="flex mr-2"
           />
           <div>
-            <div class="flex items-center flex-row mr-4">
+            <n-ellipsis class="flex items-center flex-row mr-4 w-72">
               <span class="font-bold flex">
                 {{ songs[currentIndex - 1]?.name }}
               </span>
@@ -111,19 +109,21 @@ const showSongList = ref(false)
               >
                 （{{ songs[currentIndex - 1]?.alia[0] }}）
               </n-el>
-            </div>
+            </n-ellipsis>
             <div class="flex items-center mr-4">
-              <span
-                v-for="item in songs[currentIndex - 1]?.artists"
-                :key="item.id"
-              >
-                <n-ellipsis>{{ item?.name }}</n-ellipsis>
-                {{
-                  songs[currentIndex - 1]?.artists.length - 1 ===
-                  songs[currentIndex - 1]?.artists.indexOf(item)
-                    ? ''
-                    : '/'
-                }}&nbsp;
+              <span>
+                <template
+                  v-for="item in songs[currentIndex - 1]?.artists"
+                  :key="item.id"
+                >
+                  <span>{{ item?.name }}</span>
+                  {{
+                    songs[currentIndex - 1]?.artists.length - 1 ===
+                    songs[currentIndex - 1]?.artists.indexOf(item)
+                      ? ''
+                      : '/ '
+                  }}
+                </template>
               </span>
             </div>
           </div>
@@ -187,15 +187,6 @@ const showSongList = ref(false)
           <n-button quaternary :focusable="false" @click="showSongList = true">
             <i-ph-playlist />
           </n-button>
-          <n-drawer
-            :show="showSongList"
-            :z-index="10"
-            :trap-focus="false"
-            :block-scroll="false"
-            @update:show="showSongList = false"
-          >
-            <n-button>1</n-button>
-          </n-drawer>
         </n-gi>
       </n-grid>
     </n-layout-footer>
