@@ -3,16 +3,15 @@ import { h, inject, reactive, ref } from 'vue'
 import type { Ref } from 'vue'
 import { useRoute } from 'vue-router'
 
-import { NEl } from 'naive-ui'
 import { useFetch } from '@/composables/useFetch'
 
 const columns = [
   {
-    title: '',
+    title: '封面',
     key: 'image',
-    render(row: { img1v1Url: string }) {
+    render(row: { coverImgUrl: string }) {
       return h('img', {
-        src: `${row.img1v1Url}?param=256y256`,
+        src: `${row.coverImgUrl}?param=256y256`,
         height: 64,
         width: 64,
       })
@@ -20,54 +19,34 @@ const columns = [
     width: 100,
   },
   {
-    title: '歌手',
+    title: '标题',
     key: 'name',
     render(row: { name: string; alias: string[] }) {
-      if (row.alias.length) {
-        return h(
-          'span',
-          {
-            style: { cursor: 'pointer' },
-          },
-          {
-            default: () => [
-              row.name,
-              h(
-                NEl,
-                {
-                  tag: 'span',
-                  style: { color: 'var(--text-color-3)' },
-                },
-                {
-                  default: () => ['（', h('span', null, row.alias[0]), '）'],
-                }
-              ),
-            ],
-          }
-        )
-      } else {
-        return h(
-          'span',
-          { style: { cursor: 'pointer' } },
-          {
-            default: () => row.name,
-          }
-        )
-      }
+      return h(
+        'span',
+        { class: 'cursor-pointer' },
+        {
+          default: () => row.name,
+        }
+      )
     },
     ellipsis: {
       tooltip: true,
     },
   },
   {
-    title: '专辑',
-    key: 'albumSize',
+    title: '歌曲',
+    key: 'trackCount',
     width: 100,
   },
   {
-    title: 'MV',
-    key: 'mvSize',
-    width: 100,
+    title: '创建者',
+    key: 'creator.nickname',
+  },
+  {
+    title: '播放',
+    key: 'playCount',
+    width: 200,
   },
 ]
 const route = useRoute()
@@ -83,13 +62,13 @@ const url = ref(
     `/cloudsearch?keywords=${route.params.text}
     &limit=${pagination.pageSize}
     &offset=0
-    &type=100`
+    &type=1000`
   )
 )
 const { data, onFetchFinally } = useFetch(url, { refetch: true }).json()
 onFetchFinally(() => {
   pagination.pageCount = Math.ceil(
-    data.value.result.artistCount / pagination.pageSize
+    data.value?.result.playlistCount / pagination.pageSize
   )
   loading.value = false
 })
@@ -100,7 +79,7 @@ function onUpdatePage(page: number) {
     `/cloudsearch?keywords=${route.params.text}
     &limit=${pagination.pageSize}
     &offset=${(pagination.page - 1) * pagination.pageSize}
-    &type=100`
+    &type=1000`
   )
   loading.value = true
   layoutContent.value.scrollTo({ top: 0, behavior: 'smooth' })
@@ -111,11 +90,10 @@ function onUpdatePage(page: number) {
     <n-data-table
       remote
       :columns="columns"
-      :data="data?.result.artists"
+      :data="data?.result.playlists"
       :pagination="pagination"
       :loading="loading"
       striped
-      :paginate-single-page="false"
       @update-page="onUpdatePage"
     />
   </div>

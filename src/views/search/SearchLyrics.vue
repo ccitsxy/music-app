@@ -10,6 +10,20 @@ import { useFetch } from '@/composables/useFetch'
 
 const columns = [
   {
+    type: 'expand',
+    width: 0,
+    expandable: (row: { lyrics: string }) => row.lyrics !== 'Jim Green',
+    renderExpand: (row: { lyrics: string[] }) => {
+      return row.lyrics.map((element) => {
+        return [
+          h('div', {
+            innerHTML: element,
+          }),
+        ]
+      })
+    },
+  },
+  {
     title: '标题',
     key: 'name',
     render(row: { name: string; alia: string[] }) {
@@ -122,11 +136,14 @@ const rowProps = (row: { id: string }) => {
     },
   }
 }
+function rowKey(rowData: { id: number }) {
+  return rowData.id
+}
 const route = useRoute()
 const loading = ref(true)
 const pagination = reactive({
   showSizePicker: false,
-  pageSize: 100,
+  pageSize: 20,
   page: 1,
   pageCount: 1,
 })
@@ -134,16 +151,21 @@ const url = ref(
   encodeURI(
     `/cloudsearch?keywords=${route.params.text}
     &limit=${pagination.pageSize}
-    &offset=0`
+    &offset=0
+    &type=1006`
   )
 )
-
+const a = ref<string[]>([])
 const { data, onFetchFinally } = useFetch(url, { refetch: true }).json()
 onFetchFinally(() => {
   pagination.pageCount = Math.ceil(
-    data.value?.result.songCount / pagination.pageSize
+    data.value.result.songCount / pagination.pageSize
   )
   loading.value = false
+  if (data.value.result.songs)
+    data.value.result.songs.forEach((element: { id: string }) =>
+      a.value.push(element.id)
+    )
 })
 const layoutContent = inject('layoutContent') as Ref<HTMLElement>
 function onUpdatePage(page: number) {
@@ -151,23 +173,32 @@ function onUpdatePage(page: number) {
   url.value = encodeURI(
     `/cloudsearch?keywords=${route.params.text}
     &limit=${pagination.pageSize}
-    &offset=${(pagination.page - 1) * pagination.pageSize}`
+    &offset=${(pagination.page - 1) * pagination.pageSize}
+    &type=1006`
   )
   loading.value = true
   layoutContent.value.scrollTo({ top: 0, behavior: 'smooth' })
 }
 </script>
 <template>
-  <div>
+  <div class="search-lyrics">
     <n-data-table
       remote
-      :columns="columns"
+      :columns="(columns as any)"
       :row-props="rowProps"
+      :row-key="rowKey"
       :data="data?.result.songs"
       :pagination="pagination"
       :loading="loading"
+      :expanded-row-keys="a"
       striped
       @update-page="onUpdatePage"
     />
   </div>
 </template>
+
+<style scoped>
+.search-lyrics :deep(.n-data-table-expand-trigger) {
+  display: none;
+}
+</style>

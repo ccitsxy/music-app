@@ -64,6 +64,15 @@ const { data } = useFetch(
       <n-tab-pane name="mv" tab="MV">
         <search-mvs />
       </n-tab-pane>
+      <n-tab-pane name="video" tab="视频">
+        <search-videos />
+      </n-tab-pane>
+      <n-tab-pane name="playlist" tab="歌单">
+        <search-playlists />
+      </n-tab-pane>
+      <n-tab-pane name="lyric" tab="歌词">
+        <search-lyrics />
+      </n-tab-pane>
     </n-tabs>
     <!-- <n-back-top :bottom="140" :right="20" /> -->
   </div>

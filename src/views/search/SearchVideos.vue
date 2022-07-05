@@ -18,13 +18,13 @@ const url = ref(
     `/cloudsearch?keywords=${route.params.text}
     &limit=${pagination.pageSize}
     &offset=0
-    &type=1004`
+    &type=1014`
   )
 )
 const { data, onFetchFinally } = useFetch(url, { refetch: true }).json()
 onFetchFinally(() => {
   pagination.pageCount = Math.ceil(
-    data.value.result.mvCount / pagination.pageSize
+    data.value.result.videoCount / pagination.pageSize
   )
   loading.value = false
 })
@@ -35,7 +35,7 @@ function onUpdatePage(page: number) {
     `/cloudsearch?keywords=${route.params.text}
     &limit=${pagination.pageSize}
     &offset=${(pagination.page - 1) * pagination.pageSize}
-    &type=1004`
+    &type=1014`
   )
   loading.value = true
   layoutContent.value.scrollTo({ top: 0, behavior: 'smooth' })
@@ -45,30 +45,26 @@ function onUpdatePage(page: number) {
 <template>
   <div>
     <n-spin :show="loading">
-      <n-grid
-        id="image-scroll-container"
-        cols="3 m:3 xl:4"
-        x-gap="16"
-        y-gap="16"
-        responsive="screen"
-      >
-        <n-gi v-for="mv in data?.result.mvs" :key="mv.id">
+      <n-grid cols="3 m:3 xl:4" x-gap="16" y-gap="16" responsive="screen">
+        <n-gi v-for="video in data?.result.videos" :key="video.id">
           <n-image
-            :src="`${mv.cover}?param=320y180`"
+            :src="`${video.coverUrl}?param=320y180`"
             :img-props="{
               class: 'w-full',
             }"
             object-fit="contain"
             preview-disabled
           />
-          <n-ellipsis class="font-bold w-72">{{ mv.name }}</n-ellipsis>
+          <n-ellipsis class="font-bold w-72">{{ video.title }}</n-ellipsis>
           <div>
-            <template v-for="artist in mv.artists" :key="artist.name">
+            <template v-for="user in video.creator" :key="user.userId">
               <span>
-                {{ artist.name }}
+                {{ user.userName }}
               </span>
               {{
-                mv.artists.length - 1 === mv.artists.indexOf(artist) ? '' : '/ '
+                video.creator.length - 1 === video.creator.indexOf(user)
+                  ? ''
+                  : '/ '
               }}
             </template>
           </div>

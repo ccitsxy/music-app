@@ -27,7 +27,7 @@ const columns = [
         return h(
           'span',
           {
-            style: { cursor: 'pointer' },
+            clsss: 'cursor-pointer',
           },
           {
             default: () => [
@@ -81,10 +81,10 @@ const url = ref(
     &type=10`
   )
 )
-const { data, onFetchResponse } = useFetch(url, { refetch: true }).json()
-onFetchResponse(() => {
+const { data, onFetchFinally } = useFetch(url, { refetch: true }).json()
+onFetchFinally(() => {
   pagination.pageCount = Math.ceil(
-    data.value?.result.albumCount / pagination.pageSize
+    data.value.result.albumCount / pagination.pageSize
   )
   loading.value = false
 })

@@ -8,21 +8,18 @@ const { data } = useFetch('/banner').json()
   <div>
     <n-spin :show="!data">
       <n-carousel
-        autoplay
         effect="card"
-        prev-slide-style="transform: translateX(-150%) translateZ(-800px);"
-        next-slide-style="transform: translateX(50%) translateZ(-800px);"
-        class="w-[81vw] h-[12vw]"
+        class="w-full h-200px relative"
+        prev-slide-style="position: absolute;left: 28rem;opacity: 1"
+        next-slide-style="position: absolute;left: unset;right: -5.5rem;opacity: 1"
+        centered-slides
       >
         <n-carousel-item
           v-for="item in data?.banners"
           :key="item.imageUrl"
-          :style="{ width: '40%' }"
+          class="!w-540px"
         >
-          <img
-            class="w-full h-full mx-0 my-auto object-scale-down"
-            :src="item.imageUrl"
-          />
+          <img class="w-full h-full" :src="item.imageUrl" />
           <n-el
             class="text-white bg-$primary-color text-xs absolute right-0 bottom-0 p-1"
           >
