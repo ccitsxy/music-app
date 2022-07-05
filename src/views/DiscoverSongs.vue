@@ -8,6 +8,7 @@ const { data } = useFetch('/banner').json()
   <div>
     <n-spin :show="!data">
       <n-carousel
+        autoplay
         effect="card"
         class="w-full h-200px relative"
         prev-slide-style="position: absolute;left: 28rem;opacity: 1"

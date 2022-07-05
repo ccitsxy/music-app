@@ -97,13 +97,13 @@ const showSongList = ref(false)
           />
           <div>
             <n-ellipsis class="flex items-center flex-row mr-4 w-72">
-              <span class="font-bold flex">
+              <span class="font-bold">
                 {{ songs[currentIndex - 1]?.name }}
               </span>
               <n-el
                 v-if="songs[currentIndex - 1]?.alia[0]"
                 tag="span"
-                class="text-$text-color-3 flex"
+                class="text-$text-color-3"
               >
                 （{{ songs[currentIndex - 1]?.alia[0] }}）
               </n-el>
