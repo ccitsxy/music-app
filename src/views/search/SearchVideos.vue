@@ -44,38 +44,32 @@ function onUpdatePage(page: number) {
 
 <template>
   <div>
-    <n-spin :show="loading">
-      <n-grid cols="3 m:3 xl:4" x-gap="16" y-gap="16" responsive="screen">
-        <n-gi v-for="video in data?.result.videos" :key="video.id">
-          <n-image
-            :src="`${video.coverUrl}?param=320y180`"
-            :img-props="{
-              class: 'w-full',
-            }"
-            object-fit="contain"
-            preview-disabled
-          />
-          <n-ellipsis class="font-bold w-72">{{ video.title }}</n-ellipsis>
-          <div>
-            <template v-for="user in video.creator" :key="user.userId">
-              <span>
-                {{ user.userName }}
-              </span>
-              {{
-                video.creator.length - 1 === video.creator.indexOf(user)
-                  ? ''
-                  : '/ '
-              }}
-            </template>
-          </div>
-        </n-gi>
-      </n-grid>
-      <n-pagination
-        v-if="pagination.pageCount != 1"
-        class="mt-4 justify-end"
-        v-bind="pagination"
-        @update-page="onUpdatePage"
-      />
-    </n-spin>
+    <n-grid cols="3 m:3 xl:4" x-gap="16" y-gap="16" responsive="screen">
+      <n-gi v-for="video in data?.result.videos" :key="video.id">
+        <img
+          :src="`${video.coverUrl}?param=320y180`"
+          class="w-full object-contain"
+        />
+        <n-ellipsis class="font-bold w-72">{{ video.title }}</n-ellipsis>
+        <div>
+          <template v-for="user in video.creator" :key="user.userId">
+            <span>
+              {{ user.userName }}
+            </span>
+            {{
+              video.creator.length - 1 === video.creator.indexOf(user)
+                ? ''
+                : '/ '
+            }}
+          </template>
+        </div>
+      </n-gi>
+    </n-grid>
+    <n-pagination
+      v-if="pagination.pageCount != 1"
+      class="mt-4 justify-end"
+      v-bind="pagination"
+      @update-page="onUpdatePage"
+    />
   </div>
 </template>

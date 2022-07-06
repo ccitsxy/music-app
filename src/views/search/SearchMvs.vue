@@ -53,13 +53,9 @@ function onUpdatePage(page: number) {
         responsive="screen"
       >
         <n-gi v-for="mv in data?.result.mvs" :key="mv.id">
-          <n-image
+          <img
             :src="`${mv.cover}?param=320y180`"
-            :img-props="{
-              class: 'w-full',
-            }"
-            object-fit="contain"
-            preview-disabled
+            class="w-full object-contain"
           />
           <n-ellipsis class="font-bold w-72">{{ mv.name }}</n-ellipsis>
           <div>

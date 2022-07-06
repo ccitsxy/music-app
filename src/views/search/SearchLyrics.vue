@@ -192,6 +192,7 @@ function onUpdatePage(page: number) {
       :loading="loading"
       :expanded-row-keys="a"
       striped
+      :paginate-single-page="false"
       @update-page="onUpdatePage"
     />
   </div>

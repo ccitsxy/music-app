@@ -73,6 +73,9 @@ const { data } = useFetch(
       <n-tab-pane name="lyric" tab="歌词">
         <search-lyrics />
       </n-tab-pane>
+      <n-tab-pane name="djRadio" tab="播客">
+        <search-dj-radios />
+      </n-tab-pane>
     </n-tabs>
     <!-- <n-back-top :bottom="140" :right="20" /> -->
   </div>

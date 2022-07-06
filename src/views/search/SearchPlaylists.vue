@@ -94,6 +94,7 @@ function onUpdatePage(page: number) {
       :pagination="pagination"
       :loading="loading"
       striped
+      :paginate-single-page="false"
       @update-page="onUpdatePage"
     />
   </div>
