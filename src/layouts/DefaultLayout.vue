@@ -5,6 +5,7 @@ import type { GlobalTheme } from 'naive-ui'
 import { inject, ref, watch } from 'vue'
 import type { Ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useFetch } from '@/composables/useFetch'
 
 const theme = inject<Ref<GlobalTheme | null | undefined>>('theme')
 const searchText = ref('')
@@ -22,6 +23,26 @@ watch(
   }
 )
 const themeVars = useThemeVars()
+const showLoginModal = ref(false)
+const qrimgSrc = ref('')
+function openloginModal() {
+  showLoginModal.value = true
+  loginByQrcode()
+}
+function loginByQrcode() {
+  useFetch(`/login/qr/key?timerstamp=${Date.now()}`)
+    .json()
+    .then((result) => {
+      useFetch(
+        `/login/qr/create?key=${result.data.value.data.unikey}
+      &timerstamp=${Date.now()}&qrimg=true`
+      )
+        .json()
+        .then((result) => {
+          qrimgSrc.value = result.data.value.data.qrimg
+        })
+    })
+}
 </script>
 <template>
   <n-layout>
@@ -47,6 +68,9 @@ const themeVars = useThemeVars()
         </template>
       </n-input>
       <div class="flex-1" />
+      <n-button quaternary :focusable="false" @click="openloginModal">
+        <i-carbon-user />
+      </n-button>
       <n-button quaternary :focusable="false">
         <i-carbon-settings @click="$router.push('/settings')" />
       </n-button>
@@ -78,6 +102,30 @@ const themeVars = useThemeVars()
     </n-layout-header>
 
     <n-layout-content>
+      <n-modal
+        v-model:show="showLoginModal"
+        :auto-focus="false"
+        :mask-closable="false"
+      >
+        <n-card
+          style="width: 480px"
+          :bordered="false"
+          size="huge"
+          role="dialog"
+          aria-modal="true"
+        >
+          <template #header-extra>
+            <n-button quaternary focusable @click="showLoginModal = false">
+              <i-codicon-chrome-close />
+            </n-button>
+          </template>
+          <template #header>扫码登录</template>
+          <img
+            :src="qrimgSrc"
+            class="h-48 w-48 my-8 mx-auto flex justify-center"
+          />
+        </n-card>
+      </n-modal>
       <router-view />
     </n-layout-content>
   </n-layout>
