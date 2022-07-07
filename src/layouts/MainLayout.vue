@@ -2,10 +2,10 @@
 import { computed, provide, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
-import type { MenuOption } from 'naive-ui'
-import { useMediaControls, useTitle } from '@vueuse/core'
-
 import { useSongStore } from '@/stores/song'
+
+import type { MenuOption } from 'naive-ui'
+import { useEventListener, useMediaControls, useTitle } from '@vueuse/core'
 
 const menuOptions: MenuOption[] = [
   {
@@ -17,7 +17,6 @@ const router = useRouter()
 function updateValue(key: string) {
   router.push(key)
 }
-
 const src = ref('')
 const audio = ref<HTMLMediaElement>()
 const { playing, currentTime, duration, volume, buffered, muted } =
@@ -34,6 +33,12 @@ function formatDuration(duration: number) {
 const endBuffer = computed(() =>
   buffered.value.length > 0 ? buffered.value[buffered.value.length - 1][1] : 0
 )
+useEventListener(audio, 'loadstart', () => {
+  playing.value = false
+})
+useEventListener(audio, 'loadeddata', () => {
+  playing.value = true
+})
 const layoutContent = ref<HTMLElement>()
 provide('layoutContent', layoutContent)
 const { songs, addIndex, decIndex } = useSongStore()
@@ -44,12 +49,6 @@ watch(
     src.value = songs[currentIndex.value - 1].src
     audio.value?.load()
     useTitle(songs[currentIndex.value - 1].name)
-    audio.value?.addEventListener('loadstart', () => {
-      playing.value = false
-    })
-    audio.value?.addEventListener('canplay', () => {
-      playing.value = true
-    })
   }
 )
 const showSongList = ref(false)
@@ -96,15 +95,11 @@ const showSongList = ref(false)
             class="flex mr-2"
           />
           <div>
-            <n-ellipsis class="flex items-center flex-row mr-4 w-72">
+            <n-ellipsis class="flex items-center flex-row mr-4 w-25vw">
               <span class="font-bold">
                 {{ songs[currentIndex - 1]?.name }}
               </span>
-              <n-el
-                v-if="songs[currentIndex - 1]?.alia[0]"
-                tag="span"
-                class="text-$text-color-3"
-              >
+              <n-el v-if="songs[currentIndex - 1]?.alia[0]" tag="span">
                 （{{ songs[currentIndex - 1]?.alia[0] }}）
               </n-el>
             </n-ellipsis>
@@ -119,7 +114,7 @@ const showSongList = ref(false)
                     songs[currentIndex - 1]?.artists.length - 1 ===
                     songs[currentIndex - 1]?.artists.indexOf(item)
                       ? ''
-                      : '/ '
+                      : ' / '
                   }}
                 </template>
               </span>
@@ -143,7 +138,7 @@ const showSongList = ref(false)
             circle
             :disabled="songs.length === 0"
             size="large"
-            class="mx-8"
+            class="mx-4"
             @click="playing = !playing"
           >
             <i-carbon-pause-filled v-if="playing" />
@@ -168,7 +163,7 @@ const showSongList = ref(false)
             ref="trigger"
             @click="muted = !muted"
           >
-            <i-carbon-volume-mute v-if="muted" />
+            <i-carbon-volume-mute v-if="muted || volume === 0" />
             <i-carbon-volume-up v-else />
           </n-button>
           <n-slider
@@ -180,7 +175,7 @@ const showSongList = ref(false)
             :format-tooltip="(value: number) => {
               return Math.floor(value * 100)
             }"
-            class="w-40 mx-2"
+            class="w-30 mx-2"
           />
           <n-button quaternary :focusable="false" @click="showSongList = true">
             <i-ph-playlist />

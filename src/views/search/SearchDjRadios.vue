@@ -47,20 +47,18 @@ const columns = [
   {
     title: '歌手',
     key: 'dj',
-    render(row: { dj: { nickname: string }}) {
-      return [
-        h(
-          'span',
-          {
-            style: {
-              cursor: 'pointer',
-            },
+    render(row: { dj: { nickname: string } }) {
+      return h(
+        'span',
+        {
+          style: {
+            cursor: 'pointer',
           },
-          {
-            default: () => row.dj.nickname,
-          }
-        ),
-      ]
+        },
+        {
+          default: () => row.dj.nickname,
+        }
+      )
     },
     ellipsis: {
       tooltip: true,

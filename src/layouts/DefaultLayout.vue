@@ -51,10 +51,20 @@ function loginByQrcode() {
       class="h-16 flex items-center bg-$n-color px-2"
       bordered
     >
-      <n-button quaternary :disabled="disableBack" @click="$router.go(-1)">
+      <n-button
+        quaternary
+        :focusable="false"
+        :disabled="disableBack"
+        @click="$router.go(-1)"
+      >
         <i-carbon-chevron-left />
       </n-button>
-      <n-button quaternary :disabled="disableForward" @click="$router.go(1)">
+      <n-button
+        quaternary
+        :focusable="false"
+        :disabled="disableForward"
+        @click="$router.go(1)"
+      >
         <i-carbon-chevron-right />
       </n-button>
       <n-input

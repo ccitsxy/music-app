@@ -45,13 +45,13 @@ watch([scrubbing, elementX], () => {
         :style="{ width: `${(secondary / max) * 100}%` }"
       />
     </div>
-    <div class="h-full absolute left-4px right-4px bottom-0 top-0">
+    <div class="h-full absolute left-8px right-8px bottom-0 top-0">
       <div
         class="z-0 outline-none absolute top-1/2 cursor-pointer flex"
         style="transform: translate(-50%, -50%)"
         :style="{ left: `${(value / max) * 100}%` }"
       >
-        <div class="h-8px w-8px rounded-1/2 bg-$primary-color slider-shadow" />
+        <div class="h-16px w-16px rounded-1/2 bg-white slider-shadow" />
       </div>
     </div>
   </n-el>
