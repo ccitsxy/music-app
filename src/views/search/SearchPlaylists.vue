@@ -46,7 +46,7 @@ const columns = [
   {
     title: '播放',
     key: 'playCount',
-    width: 200,
+    width: 100,
   },
 ]
 const route = useRoute()

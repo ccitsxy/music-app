@@ -79,6 +79,9 @@ const { data } = useFetch(
       <n-tab-pane name="voice" tab="声音">
         <search-voices />
       </n-tab-pane>
+      <n-tab-pane name="user" tab="用户">
+        <search-users />
+      </n-tab-pane>
     </n-tabs>
     <!-- <n-back-top :bottom="140" :right="20" /> -->
   </div>

@@ -2,31 +2,33 @@
 import { h, inject, reactive, ref } from 'vue'
 import type { Ref } from 'vue'
 import { useRoute } from 'vue-router'
-
 import { useFetch } from '@/composables/useFetch'
 
 const columns = [
   {
-    title: '封面',
+    title: '',
     key: 'image',
-    render(row: { picUrl: string }) {
+    render(row: { avatarUrl: string }) {
       return h('img', {
-        src: `${row.picUrl}?param=256y256`,
+        src: `${row.avatarUrl}?param=256y256`,
         height: 64,
         width: 64,
+        style: {
+          borderRadius: '50%',
+        },
       })
     },
     width: 100,
   },
   {
-    title: '专辑',
+    title: '用户名',
     key: 'name',
-    render(row: { name: string }) {
+    render(row: { nickname: string; alias: string[] }) {
       return h(
         'span',
         { style: { cursor: 'pointer' } },
         {
-          default: () => row.name,
+          default: () => row.nickname,
         }
       )
     },
@@ -35,34 +37,31 @@ const columns = [
     },
   },
   {
-    title: '播放',
-    key: 'playCount',
-    width: 100,
-  },
-  {
-    title: '声音',
-    key: 'programCount',
-    width: 100,
-  },
-  {
-    title: '歌手',
-    key: 'dj',
-    width: 200,
-    render(row: { dj: { nickname: string } }) {
+    title: '',
+    key: 'description',
+    width: 300,
+    render(row: { description: string; signature: string[]; vipType: string }) {
       return h(
         'span',
+        { style: { cursor: 'pointer' } },
         {
-          style: {
-            cursor: 'pointer',
-          },
-        },
-        {
-          default: () => row.dj.nickname,
+          default: () => (row.description ? row.description : row.signature),
         }
       )
     },
-    ellipsis: {
-      tooltip: true,
+  },
+  {
+    title: '',
+    key: 'vip',
+    width: 300,
+    render(row: { djStatus: string[] }) {
+      return h(
+        'span',
+        { style: { cursor: 'pointer' } },
+        {
+          default: () => (row.djStatus ? '网易音乐人' : ''),
+        }
+      )
     },
   },
 ]
@@ -70,7 +69,7 @@ const route = useRoute()
 const loading = ref(true)
 const pagination = reactive({
   showSizePicker: false,
-  pageSize: 100,
+  pageSize: 20,
   page: 1,
   pageCount: 1,
 })
@@ -79,13 +78,13 @@ const url = ref(
     `/cloudsearch?keywords=${route.params.text}
     &limit=${pagination.pageSize}
     &offset=0
-    &type=1009`
+    &type=1002`
   )
 )
 const { data, onFetchFinally } = useFetch(url, { refetch: true }).json()
 onFetchFinally(() => {
   pagination.pageCount = Math.ceil(
-    data.value.result.djRadiosCount / pagination.pageSize
+    data.value.result.userprofileCount / pagination.pageSize
   )
   loading.value = false
 })
@@ -96,7 +95,7 @@ function onUpdatePage(page: number) {
     `/cloudsearch?keywords=${route.params.text}
     &limit=${pagination.pageSize}
     &offset=${(pagination.page - 1) * pagination.pageSize}
-    &type=1009`
+    &type=1002`
   )
   loading.value = true
   layoutContent.value.scrollTo({ top: 0, behavior: 'smooth' })
@@ -107,7 +106,7 @@ function onUpdatePage(page: number) {
     <n-data-table
       remote
       :columns="columns"
-      :data="data?.result.djRadios"
+      :data="data?.result.userprofiles"
       :pagination="pagination"
       :loading="loading"
       striped

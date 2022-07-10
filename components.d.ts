@@ -63,6 +63,7 @@ declare module '@vue/runtime-core' {
     SearchPlaylists: typeof import('./src/views/search/SearchPlaylists.vue')['default']
     SearchResult: typeof import('./src/views/SearchResult.vue')['default']
     SearchSongs: typeof import('./src/views/search/SearchSongs.vue')['default']
+    SearchUsers: typeof import('./src/views/search/SearchUsers.vue')['default']
     SearchVideos: typeof import('./src/views/search/SearchVideos.vue')['default']
     SearchVoices: typeof import('./src/views/search/SearchVoices.vue')['default']
     SlideScrubber: typeof import('./src/components/SlideScrubber.vue')['default']

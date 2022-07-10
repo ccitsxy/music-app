@@ -33,13 +33,16 @@ function loginByQrcode() {
   useFetch(`/login/qr/key?timerstamp=${Date.now()}`)
     .json()
     .then((result) => {
+      const key = result.data.value.data.unikey
       useFetch(
-        `/login/qr/create?key=${result.data.value.data.unikey}
-      &timerstamp=${Date.now()}&qrimg=true`
+        `/login/qr/create?key=${key}
+        &timerstamp=${Date.now()}
+        &qrimg=true`
       )
         .json()
         .then((result) => {
           qrimgSrc.value = result.data.value.data.qrimg
+          useFetch(`/login/qr/check?key=${key}`)
         })
     })
 }

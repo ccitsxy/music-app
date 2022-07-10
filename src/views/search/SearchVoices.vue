@@ -6,18 +6,24 @@ import { useRoute } from 'vue-router'
 import { useFetch } from '@/composables/useFetch'
 
 const columns = [
-  // {
-  //   title: '封面',
-  //   key: 'image',
-  //   render(row: { picUrl: string }) {
-  //     return h('img', {
-  //       src: `${row.picUrl}?param=256y256`,
-  //       height: 64,
-  //       width: 64,
-  //     })
-  //   },
-  //   width: 100,
-  // },
+  {
+    title: '封面',
+    key: 'image',
+    render(row: {
+      uiElement: {
+        image: {
+          imageUrl: string
+        }
+      }
+    }) {
+      return h('img', {
+        src: `${row.uiElement.image.imageUrl}?param=256y256`,
+        height: 64,
+        width: 64,
+      })
+    },
+    width: 100,
+  },
   // {
   //   title: '专辑',
   //   key: 'name',
@@ -34,18 +40,13 @@ const columns = [
   //     tooltip: true,
   //   },
   // },
-  // {
-  //   title: '播放',
-  //   key: 'playCount',
-  //   width: 100,
-  // },
   {
-    title: '歌手',
-    key: 'dj',
+    title: '标题',
+    key: 'name',
     render(row: {
-      uiElement: {
-        mainTitle: {
-          title: string
+      baseInfo: {
+        mainSong: {
+          name: string
         }
       }
     }) {
@@ -57,7 +58,66 @@ const columns = [
           },
         },
         {
-          default: () => row.uiElement.mainTitle.title.slice(3),
+          default: () => row.baseInfo.mainSong.name,
+        }
+      )
+    },
+    ellipsis: {
+      tooltip: true,
+    },
+  },
+  {
+    title: '播放',
+    key: 'baseInfo.listenerCount',
+    width: 100,
+  },
+  {
+    title: '时长',
+    key: 'duration',
+    width: 100,
+    render(row: {
+      baseInfo: {
+        mainSong: {
+          duration: number
+        }
+      }
+    }) {
+      let minutes = Math.floor(
+        ((row.baseInfo.mainSong.duration / 1000) % 3600) / 60
+      ).toString()
+      if (minutes.length === 1) minutes = `0${minutes}`
+      let seconds = Math.floor(
+        (row.baseInfo.mainSong.duration / 1000) % 60
+      ).toString()
+      if (seconds.length === 1) seconds = `0${seconds}`
+      return h('span', null, {
+        default: () => `${minutes}:${seconds}`,
+      })
+    },
+    ellipsis: {
+      tooltip: true,
+    },
+  },
+  {
+    title: '歌手',
+    key: 'dj',
+    width: 200,
+    render(row: {
+      baseInfo: {
+        dj: {
+          nickname: string
+        }
+      }
+    }) {
+      return h(
+        'span',
+        {
+          style: {
+            cursor: 'pointer',
+          },
+        },
+        {
+          default: () => row.baseInfo.dj.nickname,
         }
       )
     },
