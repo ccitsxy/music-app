@@ -5,7 +5,10 @@ import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import WindiCSS from 'vite-plugin-windicss'
 import Components from 'unplugin-vue-components/vite'
-import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
+import {
+  NaiveUiResolver,
+  VueUseComponentsResolver,
+} from 'unplugin-vue-components/resolvers'
 import Icons from 'unplugin-icons/vite'
 import IconsResolver from 'unplugin-icons/resolver'
 import { visualizer } from 'rollup-plugin-visualizer'
@@ -36,7 +39,11 @@ export default defineConfig({
     WindiCSS(),
     Components({
       dts: true,
-      resolvers: [NaiveUiResolver(), IconsResolver()],
+      resolvers: [
+        NaiveUiResolver(),
+        IconsResolver(),
+        VueUseComponentsResolver(),
+      ],
       dirs: ['src/components', 'src/layouts', 'src/views'],
     }),
     Icons(),

@@ -3,7 +3,8 @@ import { h, inject, reactive, ref } from 'vue'
 import type { Ref } from 'vue'
 import { useRoute } from 'vue-router'
 
-import { NEl } from 'naive-ui'
+import { NEl, NSkeleton } from 'naive-ui'
+import { UseImage } from '@vueuse/components'
 import { useFetch } from '@/composables/useFetch'
 
 const columns = [
@@ -11,11 +12,36 @@ const columns = [
     title: '',
     key: 'image',
     render(row: { img1v1Url: string }) {
-      return h('img', {
-        src: `${row.img1v1Url}?param=256y256`,
-        height: 64,
-        width: 64,
-      })
+      return h(
+        'div',
+        {
+          style: {
+            width: '64px',
+            height: '64px',
+            display: 'flex',
+          },
+        },
+        {
+          default: () => [
+            h(
+              UseImage,
+              {
+                src: `${row.img1v1Url}?param=256y256`,
+              },
+              {
+                loading: () =>
+                  h(NSkeleton, {
+                    style: {
+                      width: '64px',
+                      height: '64px',
+                      display: 'flex',
+                    },
+                  }),
+              }
+            ),
+          ],
+        }
+      )
     },
     width: 100,
   },

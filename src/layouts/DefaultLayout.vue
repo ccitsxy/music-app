@@ -8,7 +8,7 @@ import { useRouter } from 'vue-router'
 import { useFetch } from '@/composables/useFetch'
 
 const theme = inject<Ref<GlobalTheme | null | undefined>>('theme')
-const searchText = ref('')
+
 const disableBack = ref(true)
 const disableForward = ref(true)
 const router = useRouter()
@@ -22,6 +22,14 @@ watch(
     immediate: true,
   }
 )
+const searchText = ref('')
+function fixedEncodeURI(str: string) {
+  console.log(str)
+  return encodeURI(str).replace(/#/g, '%23')
+}
+function search() {
+  router.push(`/search/${fixedEncodeURI(searchText.value)}`)
+}
 const themeVars = useThemeVars()
 const showLoginModal = ref(false)
 const qrimgSrc = ref('')
@@ -74,7 +82,7 @@ function loginByQrcode() {
         v-model:value="searchText"
         placeholder="搜索"
         class="mx-4 !w-60"
-        @keyup.enter="$router.push(`/search/${searchText}`)"
+        @keyup.enter="search()"
       >
         <template #prefix>
           <i-carbon-search />

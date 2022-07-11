@@ -53,10 +53,15 @@ function onUpdatePage(page: number) {
         responsive="screen"
       >
         <n-gi v-for="mv in data?.result.mvs" :key="mv.id">
-          <img
-            :src="`${mv.cover}?param=320y180`"
-            class="w-full object-contain"
-          />
+          <use-image :src="`${mv.cover}?param=320y180`">
+            <img
+              :src="`${mv.cover}?param=320y180`"
+              class="w-full object-contain"
+            />
+            <template #loading>
+              <n-skeleton class="w-320px h-180px" />
+            </template>
+          </use-image>
           <n-ellipsis class="font-bold w-72">{{ mv.name }}</n-ellipsis>
           <div>
             <template v-for="artist in mv.artists" :key="artist.name">

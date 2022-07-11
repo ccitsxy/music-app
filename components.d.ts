@@ -29,6 +29,7 @@ declare module '@vue/runtime-core' {
     ICodiconChromeMinimize: typeof import('~icons/codicon/chrome-minimize')['default']
     IPhPlaylist: typeof import('~icons/ph/playlist')['default']
     MainLayout: typeof import('./src/layouts/MainLayout.vue')['default']
+    NBackTop: typeof import('naive-ui')['NBackTop']
     NButton: typeof import('naive-ui')['NButton']
     NCard: typeof import('naive-ui')['NCard']
     NCarousel: typeof import('naive-ui')['NCarousel']
@@ -48,6 +49,7 @@ declare module '@vue/runtime-core' {
     NMenu: typeof import('naive-ui')['NMenu']
     NModal: typeof import('naive-ui')['NModal']
     NPagination: typeof import('naive-ui')['NPagination']
+    NSkeleton: typeof import('naive-ui')['NSkeleton']
     NSlider: typeof import('naive-ui')['NSlider']
     NSpin: typeof import('naive-ui')['NSpin']
     NTabPane: typeof import('naive-ui')['NTabPane']
@@ -67,6 +69,7 @@ declare module '@vue/runtime-core' {
     SearchVideos: typeof import('./src/views/search/SearchVideos.vue')['default']
     SearchVoices: typeof import('./src/views/search/SearchVoices.vue')['default']
     SlideScrubber: typeof import('./src/components/SlideScrubber.vue')['default']
+    UseImage: typeof import('@vueuse/components')['UseImage']
     UserSettings: typeof import('./src/views/UserSettings.vue')['default']
   }
 }

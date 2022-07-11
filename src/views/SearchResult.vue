@@ -10,15 +10,20 @@ const { data } = useFetch(
 </script>
 <template>
   <div>
-    <n-grid x-gap="12" :cols="2" class="mb-4">
+    <n-grid x-gap="12" :cols="2">
       <n-gi v-for="item in data?.result?.artist" :key="item.id">
-        <n-card embedded content-style="display: flex;padding: 12px;">
-          <img
-            :src="`${item.img1v1Url}?param=256y256`"
-            width="48"
-            height="48"
-            class="flex mr-2"
-          />
+        <n-card
+          class="mb-4"
+          embedded
+          content-style="display: flex;padding: 12px;height: 48px"
+        >
+          <div class="w-12 h-12 flex mr-2">
+            <use-image :src="`${item.img1v1Url}?param=256y256`">
+              <template #loading>
+                <n-skeleton class="w-12 h-12 flex" />
+              </template>
+            </use-image>
+          </div>
           <div class="flex-row">
             <div class="flex">
               <span> 歌手：{{ item.name }} </span>
@@ -32,15 +37,15 @@ const { data } = useFetch(
           </div>
         </n-card>
       </n-gi>
-
       <n-gi v-for="item in data?.result?.playlist" :key="item.id">
         <n-card embedded content-style="display:flex;padding:12px">
-          <img
-            :src="`${item.coverImgUrl}?param=256y256`"
-            width="48"
-            height="48"
-            class="flex mr-2"
-          />
+          <div class="w-12 h-12 flex mr-2">
+            <use-image :src="`${item.coverImgUrl}?param=256y256`">
+              <template #loading>
+                <n-skeleton class="w-12 h-12 flex mr-2" />
+              </template>
+            </use-image>
+          </div>
           <div class="flex-row">
             <div class="flex">歌单：{{ item.name }}</div>
             <div class="flex">
@@ -83,6 +88,6 @@ const { data } = useFetch(
         <search-users />
       </n-tab-pane>
     </n-tabs>
-    <!-- <n-back-top :bottom="140" :right="20" /> -->
+    <n-back-top :bottom="140" :right="20" />
   </div>
 </template>

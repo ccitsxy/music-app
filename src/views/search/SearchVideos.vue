@@ -46,10 +46,17 @@ function onUpdatePage(page: number) {
   <div>
     <n-grid cols="3 m:3 xl:4" x-gap="16" y-gap="16" responsive="screen">
       <n-gi v-for="video in data?.result.videos" :key="video.id">
-        <img
-          :src="`${video.coverUrl}?param=320y180`"
-          class="w-full object-contain"
-        />
+        <div class="w-full">
+          <use-image :src="`${video.coverUrl}?param=320y180`">
+            <img
+              :src="`${video.coverUrl}?param=320y180`"
+              class="w-full object-contain"
+            />
+            <template #loading>
+              <n-skeleton class="w-320px h-180px" />
+            </template>
+          </use-image>
+        </div>
         <n-ellipsis class="font-bold w-72">{{ video.title }}</n-ellipsis>
         <div>
           <template v-for="user in video.creator" :key="user.userId">
