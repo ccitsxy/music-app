@@ -2,10 +2,12 @@
 import { useRoute } from 'vue-router'
 
 import { useFetch } from '@/composables/useFetch'
+import { fixedEncodeURI } from '@/utils/fixedEncodeURI'
 
 const route = useRoute()
+
 const { data } = useFetch(
-  encodeURI(`/search/multimatch?keywords=${route.params.text}`)
+  fixedEncodeURI(`/search/multimatch?keywords=${route.params.text}`)
 ).json()
 </script>
 <template>

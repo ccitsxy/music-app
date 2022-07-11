@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { appWindow } from '@tauri-apps/api/window'
-import { useThemeVars, darkTheme } from 'naive-ui'
-import type { GlobalTheme } from 'naive-ui'
 import { inject, ref, watch } from 'vue'
 import type { Ref } from 'vue'
 import { useRouter } from 'vue-router'
+
+import { useThemeVars, darkTheme } from 'naive-ui'
+import type { GlobalTheme } from 'naive-ui'
 import { useFetch } from '@/composables/useFetch'
+import { fixedEncodeURI } from '@/utils/fixedEncodeURI'
 
 const theme = inject<Ref<GlobalTheme | null | undefined>>('theme')
 
@@ -23,10 +25,6 @@ watch(
   }
 )
 const searchText = ref('')
-function fixedEncodeURI(str: string) {
-  console.log(str)
-  return encodeURI(str).replace(/#/g, '%23')
-}
 function search() {
   router.push(`/search/${fixedEncodeURI(searchText.value)}`)
 }

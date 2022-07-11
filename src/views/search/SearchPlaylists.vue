@@ -7,6 +7,7 @@ import { NSkeleton } from 'naive-ui'
 import { UseImage } from '@vueuse/components'
 
 import { useFetch } from '@/composables/useFetch'
+import { fixedEncodeURI } from '@/utils/fixedEncodeURI'
 
 const columns = [
   {
@@ -86,7 +87,7 @@ const pagination = reactive({
   pageCount: 1,
 })
 const url = ref(
-  encodeURI(
+  fixedEncodeURI(
     `/cloudsearch?keywords=${route.params.text}
     &limit=${pagination.pageSize}
     &offset=0
@@ -103,7 +104,7 @@ onFetchFinally(() => {
 const layoutContent = inject('layoutContent') as Ref<HTMLElement>
 function onUpdatePage(page: number) {
   pagination.page = page
-  url.value = encodeURI(
+  url.value = fixedEncodeURI(
     `/cloudsearch?keywords=${route.params.text}
     &limit=${pagination.pageSize}
     &offset=${(pagination.page - 1) * pagination.pageSize}
