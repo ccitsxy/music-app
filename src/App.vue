@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { onMounted, provide, ref } from 'vue'
+import { onMounted, provide, ref, watch } from 'vue'
 import { appWindow } from '@tauri-apps/api/window'
-import type { GlobalThemeOverrides } from 'naive-ui'
+import { darkTheme, useOsTheme } from 'naive-ui'
+import type { GlobalThemeOverrides, GlobalTheme } from 'naive-ui'
 
 onMounted(() => {
   window.onselectstart = () => {
@@ -22,7 +23,15 @@ const themeOverrides: GlobalThemeOverrides = {
     primaryColorSuppl: '#ff4d4f',
   },
 }
-const theme = ref(null)
+const osTheme = useOsTheme()
+const theme = ref<GlobalTheme | null>(null)
+watch(
+  () => osTheme.value,
+  (newVal) => {
+    theme.value = newVal === 'dark' ? darkTheme : null
+  },
+  { immediate: true }
+)
 provide('theme', theme)
 </script>
 <template>

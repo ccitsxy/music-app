@@ -27,7 +27,9 @@ onFetchFinally(() => {
   pagination.pageCount = Math.ceil(
     data.value.result.mvCount / pagination.pageSize
   )
-  loading.value = false
+  setTimeout(() => {
+    loading.value = false
+  }, 300)
 })
 const layoutContent = inject('layoutContent') as Ref<HTMLElement>
 function onUpdatePage(page: number) {
@@ -41,53 +43,69 @@ function onUpdatePage(page: number) {
   loading.value = true
   layoutContent.value.scrollTo({ top: 0, behavior: 'smooth' })
 }
+const theme = inject('theme')
 </script>
 
 <template>
   <div>
-    <n-spin :show="loading">
-      <n-grid cols="3 m:3 xl:4" x-gap="16" y-gap="16" responsive="screen">
+    <n-grid cols="3 m:3 xl:4" x-gap="16" y-gap="16" responsive="screen">
+      <template v-if="loading">
         <template v-if="loading">
-          <n-gi v-for="item in 24" :key="item">
-            <img src="@/assets/skeleton.jpg" class="w-full object-scale-down" />
-            <span></span>
-            <span></span>
+          <n-gi v-for="item in 24" :key="item" class="space-y-1 pb-4.4px">
+            <img
+              v-if="theme"
+              src="@/assets/skeleton-dark.png"
+              class="w-full object-scale-down"
+            />
+            <img
+              v-else
+              src="@/assets/skeleton.png"
+              class="w-full object-scale-down"
+            />
+            <n-skeleton class="h-4 w-60 flex" />
+            <n-skeleton class="h-4 w-60 flex" />
           </n-gi>
         </template>
-        <n-gi v-for="mv in data?.result.mvs" :key="mv.id">
-          <div class="w-full">
-            <use-image :src="`${mv.cover}?param=320y180`">
+      </template>
+      <n-gi v-for="mv in data?.result.mvs" :key="mv.id">
+        <div class="w-full">
+          <use-image :src="`${mv.cover}?param=320y180`">
+            <img
+              :src="`${mv.cover}?param=320y180`"
+              class="w-full object-scale-down"
+            />
+            <template #loading>
               <img
-                :src="`${mv.cover}?param=320y180`"
+                v-if="theme"
+                src="@/assets/skeleton-dark.png"
                 class="w-full object-scale-down"
               />
-              <template #loading>
-                <img
-                  src="@/assets/skeleton.jpg"
-                  class="w-full object-scale-down"
-                />
-              </template>
-            </use-image>
-          </div>
-          <n-ellipsis class="font-bold w-72">{{ mv.name }}</n-ellipsis>
-          <div>
-            <template v-for="artist in mv.artists" :key="artist.name">
-              <span>
-                {{ artist.name }}
-              </span>
-              {{
-                mv.artists.length - 1 === mv.artists.indexOf(artist) ? '' : '/ '
-              }}
+              <img
+                v-else
+                src="@/assets/skeleton.png"
+                class="w-full object-scale-down"
+              />
             </template>
-          </div>
-        </n-gi>
-      </n-grid>
-      <n-pagination
-        v-if="pagination.pageCount != 1"
-        class="mt-4 justify-center"
-        v-bind="pagination"
-        @update-page="onUpdatePage"
-      />
-    </n-spin>
+          </use-image>
+        </div>
+        <n-ellipsis class="font-bold w-60">{{ mv.name }}</n-ellipsis>
+        <div>
+          <template v-for="artist in mv.artists" :key="artist.name">
+            <span>
+              {{ artist.name }}
+            </span>
+            {{
+              mv.artists.length - 1 === mv.artists.indexOf(artist) ? '' : '/ '
+            }}
+          </template>
+        </div>
+      </n-gi>
+    </n-grid>
+    <n-pagination
+      v-if="pagination.pageCount != 1"
+      class="mt-4 justify-center"
+      v-bind="pagination"
+      @update-page="onUpdatePage"
+    />
   </div>
 </template>
