@@ -175,4 +175,7 @@ body {
 .n-popover__content {
   cursor: default;
 }
+.n-data-table .n-data-table__pagination {
+  justify-content: center;
+}
 </style>

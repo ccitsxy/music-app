@@ -90,6 +90,6 @@ const { data } = useFetch(
         <search-users />
       </n-tab-pane>
     </n-tabs>
-    <n-back-top :bottom="140" :right="20" />
+    <n-back-top :bottom="90" :right="20" />
   </div>
 </template>
