@@ -46,23 +46,29 @@ function onUpdatePage(page: number) {
 <template>
   <div>
     <n-spin :show="loading">
-      <n-grid
-        id="image-scroll-container"
-        cols="3 m:3 xl:4"
-        x-gap="16"
-        y-gap="16"
-        responsive="screen"
-      >
+      <n-grid cols="3 m:3 xl:4" x-gap="16" y-gap="16" responsive="screen">
+        <template v-if="loading">
+          <n-gi v-for="item in 24" :key="item">
+            <img src="@/assets/skeleton.jpg" class="w-full object-scale-down" />
+            <span></span>
+            <span></span>
+          </n-gi>
+        </template>
         <n-gi v-for="mv in data?.result.mvs" :key="mv.id">
-          <use-image :src="`${mv.cover}?param=320y180`">
-            <img
-              :src="`${mv.cover}?param=320y180`"
-              class="w-full object-contain"
-            />
-            <template #loading>
-              <n-skeleton class="w-320px h-180px" />
-            </template>
-          </use-image>
+          <div class="w-full">
+            <use-image :src="`${mv.cover}?param=320y180`">
+              <img
+                :src="`${mv.cover}?param=320y180`"
+                class="w-full object-scale-down"
+              />
+              <template #loading>
+                <img
+                  src="@/assets/skeleton.jpg"
+                  class="w-full object-scale-down"
+                />
+              </template>
+            </use-image>
+          </div>
           <n-ellipsis class="font-bold w-72">{{ mv.name }}</n-ellipsis>
           <div>
             <template v-for="artist in mv.artists" :key="artist.name">
@@ -78,7 +84,7 @@ function onUpdatePage(page: number) {
       </n-grid>
       <n-pagination
         v-if="pagination.pageCount != 1"
-        class="mt-4 justify-end"
+        class="mt-4 justify-center"
         v-bind="pagination"
         @update-page="onUpdatePage"
       />

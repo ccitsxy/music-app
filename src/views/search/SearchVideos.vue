@@ -45,39 +45,44 @@ function onUpdatePage(page: number) {
 
 <template>
   <div>
-    <n-grid cols="3 m:3 xl:4" x-gap="16" y-gap="16" responsive="screen">
-      <n-gi v-for="video in data?.result.videos" :key="video.id">
-        <div class="w-full">
-          <use-image :src="`${video.coverUrl}?param=320y180`">
-            <img
-              :src="`${video.coverUrl}?param=320y180`"
-              class="w-full object-contain"
-            />
-            <template #loading>
-              <n-skeleton class="w-320px h-180px" />
+    <n-spin :show="loading">
+      <n-grid cols="3 m:3 xl:4" x-gap="16" y-gap="16" responsive="screen">
+        <n-gi v-for="video in data?.result.videos" :key="video.id">
+          <div class="w-full">
+            <use-image :src="`${video.coverUrl}?param=320y180`">
+              <img
+                :src="`${video.coverUrl}?param=320y180`"
+                class="w-full object-scale-down"
+              />
+              <template #loading>
+                <img
+                  src="@/assets/skeleton.jpg"
+                  class="w-full object-scale-down"
+                />
+              </template>
+            </use-image>
+          </div>
+          <n-ellipsis class="font-bold w-72">{{ video.title }}</n-ellipsis>
+          <div>
+            <template v-for="user in video.creator" :key="user.userId">
+              <span>
+                {{ user.userName }}
+              </span>
+              {{
+                video.creator.length - 1 === video.creator.indexOf(user)
+                  ? ''
+                  : '/ '
+              }}
             </template>
-          </use-image>
-        </div>
-        <n-ellipsis class="font-bold w-72">{{ video.title }}</n-ellipsis>
-        <div>
-          <template v-for="user in video.creator" :key="user.userId">
-            <span>
-              {{ user.userName }}
-            </span>
-            {{
-              video.creator.length - 1 === video.creator.indexOf(user)
-                ? ''
-                : '/ '
-            }}
-          </template>
-        </div>
-      </n-gi>
-    </n-grid>
-    <n-pagination
-      v-if="pagination.pageCount != 1"
-      class="mt-4 justify-end"
-      v-bind="pagination"
-      @update-page="onUpdatePage"
-    />
+          </div>
+        </n-gi>
+      </n-grid>
+      <n-pagination
+        v-if="pagination.pageCount != 1"
+        class="mt-4 justify-center"
+        v-bind="pagination"
+        @update-page="onUpdatePage"
+      />
+    </n-spin>
   </div>
 </template>
