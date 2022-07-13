@@ -1,4 +1,6 @@
 <script setup lang="ts"></script>
 <template>
-  <div></div>
+  <div>
+    <n-button :focusable="false">button</n-button>
+  </div>
 </template>

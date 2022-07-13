@@ -172,9 +172,11 @@ body {
 .n-layout .n-layout-scroll-container ::-webkit-scrollbar-thumb:hover {
   background-color: v-bind('themeVars.scrollbarColorHover');
 }
+
 .n-popover__content {
   cursor: default;
 }
+
 .n-data-table .n-data-table__pagination {
   justify-content: center;
 }

@@ -16,14 +16,9 @@ const router = createRouter({
           redirect: '/discover',
           children: [
             {
-              path: '/discover',
-              name: 'discover',
-              component: () => import('@/views/DiscoverSongs.vue'),
-            },
-            {
-              path: '/podcast',
-              name: 'podcast',
-              component: () => import('@/views/PodcastView.vue'),
+              path: '/audio',
+              name: 'audio',
+              component: () => import('@/views/AudioPlayer.vue'),
             },
             {
               path: '/search/:text',
@@ -34,6 +29,16 @@ const router = createRouter({
               path: '/settings',
               name: 'settings',
               component: () => import('@/views/UserSettings.vue'),
+            },
+            {
+              path: '/discover',
+              name: 'discover',
+              component: () => import('@/views/DiscoverSongs.vue'),
+            },
+            {
+              path: '/podcast',
+              name: 'podcast',
+              component: () => import('@/views/PodcastView.vue'),
             },
           ],
         },

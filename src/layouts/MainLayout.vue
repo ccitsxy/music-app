@@ -78,7 +78,7 @@ const showSongList = ref(false)
         v-if="currentIndex"
         class="flex items-center absolute left-0 bottom-68px w-screen z-10"
       >
-        <slide-scrubber
+        <stack-slider
           v-model="currentTime"
           :max="duration"
           :secondary="endBuffer"

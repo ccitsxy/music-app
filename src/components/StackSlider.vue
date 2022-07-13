@@ -51,14 +51,14 @@ watch([scrubbing, elementX], () => {
         style="transform: translate(-50%, -50%)"
         :style="{ left: `${(value / max) * 100}%` }"
       >
-        <div class="h-16px w-16px rounded-1/2 bg-white slider-shadow" />
+        <div class="h-4 w-4 rounded-1/2 bg-white stack-slider-shadow" />
       </div>
     </div>
   </n-el>
 </template>
 
 <style scoped>
-.slider-shadow {
+.stack-slider-shadow {
   box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.3),
     inset 0 0 1px 0 rgba(0, 0, 0, 0.05);
 }
