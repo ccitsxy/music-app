@@ -52,6 +52,15 @@ function loginByQrcode() {
         })
     })
 }
+const isMaximized = ref(false)
+appWindow.isMaximized().then((e) => {
+  isMaximized.value = e
+})
+appWindow.onResized(() => {
+  appWindow.isMaximized().then((e) => {
+    isMaximized.value = e
+  })
+})
 </script>
 <template>
   <n-layout>
@@ -112,8 +121,8 @@ function loginByQrcode() {
         :focusable="false"
         @click="appWindow.toggleMaximize()"
       >
-        <i-codicon-chrome-maximize />
-        <!-- <i-codicon-chrome-restore /> -->
+        <i-codicon-chrome-restore v-if="isMaximized" />
+        <i-codicon-chrome-maximize v-else />
       </n-button>
       <n-button quaternary :focusable="false" @click="appWindow.close()">
         <i-codicon-chrome-close />
