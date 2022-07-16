@@ -9,7 +9,18 @@ import type { GlobalTheme } from 'naive-ui'
 import { useFetch } from '@/composables/useFetch'
 import { fixedEncodeURI } from '@/utils/fixedEncodeURI'
 
+const isMaximized = ref(false)
+appWindow.isMaximized().then((e) => {
+  isMaximized.value = e
+})
+appWindow.onResized(() => {
+  appWindow.isMaximized().then((e) => {
+    isMaximized.value = e
+  })
+})
+
 const theme = inject<Ref<GlobalTheme | null | undefined>>('theme')
+const themeVars = useThemeVars()
 
 const disableBack = ref(true)
 const disableForward = ref(true)
@@ -28,14 +39,14 @@ const searchText = ref('')
 function search() {
   router.push(`/search/${fixedEncodeURI(searchText.value)}`)
 }
-const themeVars = useThemeVars()
+
 const showLoginModal = ref(false)
 const qrimgSrc = ref('')
 function openloginModal() {
   showLoginModal.value = true
   loginByQrcode()
 }
-function loginByQrcode() {
+async function loginByQrcode() {
   useFetch(`/login/qr/key?timerstamp=${Date.now()}`)
     .json()
     .then((result) => {
@@ -52,15 +63,6 @@ function loginByQrcode() {
         })
     })
 }
-const isMaximized = ref(false)
-appWindow.isMaximized().then((e) => {
-  isMaximized.value = e
-})
-appWindow.onResized(() => {
-  appWindow.isMaximized().then((e) => {
-    isMaximized.value = e
-  })
-})
 </script>
 <template>
   <n-layout>
@@ -72,6 +74,7 @@ appWindow.onResized(() => {
       <n-button
         quaternary
         :focusable="false"
+        :native-focus-behavior="false"
         :disabled="disableBack"
         @click="$router.go(-1)"
       >
@@ -80,6 +83,7 @@ appWindow.onResized(() => {
       <n-button
         quaternary
         :focusable="false"
+        :native-focus-behavior="false"
         :disabled="disableForward"
         @click="$router.go(1)"
       >
@@ -96,35 +100,58 @@ appWindow.onResized(() => {
         </template>
       </n-input>
       <div class="flex-1" />
-      <n-button quaternary :focusable="false" @click="openloginModal">
+      <n-button
+        quaternary
+        :focusable="false"
+        :native-focus-behavior="false"
+        @click="openloginModal"
+      >
         <i-carbon-user />
       </n-button>
-      <n-button quaternary :focusable="false">
+      <n-button quaternary :focusable="false" :native-focus-behavior="false">
         <i-carbon-settings @click="$router.push('/settings')" />
       </n-button>
       <n-button
         v-if="theme"
         quaternary
         :focusable="false"
+        :native-focus-behavior="false"
         @click="theme = null"
       >
         <i-carbon-moon />
       </n-button>
-      <n-button v-else quaternary :focusable="false" @click="theme = darkTheme">
+      <n-button
+        v-else
+        quaternary
+        :focusable="false"
+        :native-focus-behavior="false"
+        @click="theme = darkTheme"
+      >
         <i-carbon-sun />
       </n-button>
-      <n-button quaternary :focusable="false" @click="appWindow.minimize()">
+      <n-button
+        quaternary
+        :focusable="false"
+        :native-focus-behavior="false"
+        @click="appWindow.minimize()"
+      >
         <i-codicon-chrome-minimize />
       </n-button>
       <n-button
         quaternary
         :focusable="false"
+        :native-focus-behavior="false"
         @click="appWindow.toggleMaximize()"
       >
         <i-codicon-chrome-restore v-if="isMaximized" />
         <i-codicon-chrome-maximize v-else />
       </n-button>
-      <n-button quaternary :focusable="false" @click="appWindow.close()">
+      <n-button
+        quaternary
+        :focusable="false"
+        :native-focus-behavior="false"
+        @click="appWindow.close()"
+      >
         <i-codicon-chrome-close />
       </n-button>
     </n-layout-header>
@@ -136,20 +163,37 @@ appWindow.onResized(() => {
         :mask-closable="false"
       >
         <n-card
-          style="width: 480px"
+          class="w-96"
           :bordered="false"
           size="huge"
           role="dialog"
           aria-modal="true"
         >
           <template #header-extra>
-            <n-button quaternary focusable @click="showLoginModal = false">
+            <n-button
+              quaternary
+              :focusable="false"
+              :native-focus-behavior="false"
+              @click="showLoginModal = false"
+            >
               <i-codicon-chrome-close />
             </n-button>
           </template>
-          <template #header>扫码登录</template>
-          <img
-            :src="qrimgSrc"
+          <template #header>
+            <div class="px-14px">扫码登录</div>
+          </template>
+          <div
+            v-if="qrimgSrc"
+            class="h-48 w-48 my-8 mx-auto flex justify-center"
+          >
+            <use-image :src="qrimgSrc">
+              <template #loading>
+                <n-skeleton class="w-48 h-48 flex" />
+              </template>
+            </use-image>
+          </div>
+          <n-skeleton
+            v-else
             class="h-48 w-48 my-8 mx-auto flex justify-center"
           />
         </n-card>

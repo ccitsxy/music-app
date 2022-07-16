@@ -99,7 +99,11 @@ const showSongList = ref(false)
               <span class="font-bold">
                 {{ songs[currentIndex - 1]?.name }}
               </span>
-              <n-el v-if="songs[currentIndex - 1]?.alia[0]" tag="span">
+              <n-el
+                v-if="songs[currentIndex - 1]?.alia[0]"
+                tag="span"
+                class="opacity-75"
+              >
                 （{{ songs[currentIndex - 1]?.alia[0] }}）
               </n-el>
             </n-ellipsis>
@@ -127,6 +131,7 @@ const showSongList = ref(false)
           <n-button
             quaternary
             :focusable="false"
+            :native-focus-behavior="false"
             @click="decIndex()"
             :disabled="currentIndex <= 1"
           >
@@ -135,6 +140,7 @@ const showSongList = ref(false)
           <n-button
             secondary
             :focusable="false"
+            :native-focus-behavior="false"
             circle
             :disabled="songs.length === 0"
             size="large"
@@ -147,6 +153,7 @@ const showSongList = ref(false)
           <n-button
             quaternary
             :focusable="false"
+            :native-focus-behavior="false"
             :disabled="currentIndex === songs.length || songs.length === 0"
             @click="addIndex()"
           >
@@ -160,6 +167,7 @@ const showSongList = ref(false)
           <n-button
             quaternary
             :focusable="false"
+            :native-focus-behavior="false"
             ref="trigger"
             @click="muted = !muted"
           >
@@ -177,7 +185,12 @@ const showSongList = ref(false)
             }"
             class="w-30 mx-2"
           />
-          <n-button quaternary :focusable="false" @click="showSongList = true">
+          <n-button
+            quaternary
+            :focusable="false"
+            :native-focus-behavior="false"
+            @click="showSongList = true"
+          >
             <i-ph-playlist />
           </n-button>
         </n-gi>

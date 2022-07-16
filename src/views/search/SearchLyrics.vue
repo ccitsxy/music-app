@@ -36,7 +36,7 @@ const columns = [
               NEl,
               {
                 tag: 'span',
-                style: { color: 'var(--text-color-3)' },
+                class: 'opacity-75',
               },
               {
                 default: () => ['（', h('span', null, row.alia), '）'],
@@ -63,9 +63,7 @@ const columns = [
           h(
             'span',
             {
-              style: {
-                cursor: 'pointer',
-              },
+              class: 'cursor-pointer',
             },
             {
               default: () => element.name,
@@ -117,7 +115,7 @@ const rowProps = (row: { id: string }) => {
     artists: [],
   }
   return {
-    style: 'cursor: default;',
+    class: 'cursor-pointer',
     onDblclick: () => {
       useFetch(`/song/url?id=${row.id}`)
         .json()

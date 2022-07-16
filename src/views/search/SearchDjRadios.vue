@@ -17,11 +17,7 @@ const columns = [
       return h(
         'div',
         {
-          style: {
-            width: '64px',
-            height: '64px',
-            display: 'flex',
-          },
+          class: 'w-16 h-16 flex',
         },
         {
           default: () => [
@@ -33,11 +29,7 @@ const columns = [
               {
                 loading: () =>
                   h(NSkeleton, {
-                    style: {
-                      width: '64px',
-                      height: '64px',
-                      display: 'flex',
-                    },
+                    class: 'w-16 h-16 flex',
                   }),
               }
             ),
@@ -53,7 +45,7 @@ const columns = [
     render(row: { name: string }) {
       return h(
         'span',
-        { style: { cursor: 'pointer' } },
+        { class: 'cursor-pointer' },
         {
           default: () => row.name,
         }
@@ -81,9 +73,7 @@ const columns = [
       return h(
         'span',
         {
-          style: {
-            cursor: 'pointer',
-          },
+          class: 'cursor-pointer',
         },
         {
           default: () => row.dj.nickname,

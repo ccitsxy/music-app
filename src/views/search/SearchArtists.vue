@@ -16,11 +16,7 @@ const columns = [
       return h(
         'div',
         {
-          style: {
-            width: '64px',
-            height: '64px',
-            display: 'flex',
-          },
+          class: 'w-16 h-16 flex',
         },
         {
           default: () => [
@@ -32,11 +28,7 @@ const columns = [
               {
                 loading: () =>
                   h(NSkeleton, {
-                    style: {
-                      width: '64px',
-                      height: '64px',
-                      display: 'flex',
-                    },
+                    class: 'w-16 h-16 flex',
                   }),
               }
             ),
@@ -54,7 +46,7 @@ const columns = [
         return h(
           'span',
           {
-            style: { cursor: 'pointer' },
+            class: 'cursor-pointer',
           },
           {
             default: () => [
@@ -63,7 +55,7 @@ const columns = [
                 NEl,
                 {
                   tag: 'span',
-                  style: { color: 'var(--text-color-3)' },
+                  class: 'opacity-75',
                 },
                 {
                   default: () => ['（', h('span', null, row.alias[0]), '）'],
@@ -75,7 +67,7 @@ const columns = [
       } else {
         return h(
           'span',
-          { style: { cursor: 'pointer' } },
+          { class: 'cursor-pointer' },
           {
             default: () => row.name,
           }

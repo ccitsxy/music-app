@@ -23,11 +23,7 @@ const columns = [
       return h(
         'div',
         {
-          style: {
-            width: '64px',
-            height: '64px',
-            display: 'flex',
-          },
+          class: 'w-16 h-16 flex',
         },
         {
           default: () => [
@@ -39,11 +35,7 @@ const columns = [
               {
                 loading: () =>
                   h(NSkeleton, {
-                    style: {
-                      width: '64px',
-                      height: '64px',
-                      display: 'flex',
-                    },
+                    class: 'w-16 h-16 flex',
                   }),
               }
             ),
@@ -53,22 +45,6 @@ const columns = [
     },
     width: 100,
   },
-  // {
-  //   title: '专辑',
-  //   key: 'name',
-  //   render(row: { name: string }) {
-  //     return h(
-  //       'span',
-  //       { style: { cursor: 'pointer' } },
-  //       {
-  //         default: () => row.name,
-  //       }
-  //     )
-  //   },
-  //   ellipsis: {
-  //     tooltip: true,
-  //   },
-  // },
   {
     title: '标题',
     key: 'name',
@@ -82,9 +58,7 @@ const columns = [
       return h(
         'span',
         {
-          style: {
-            cursor: 'pointer',
-          },
+          class: 'cursor-pointer',
         },
         {
           default: () => row.baseInfo.mainSong.name,
@@ -141,9 +115,7 @@ const columns = [
       return h(
         'span',
         {
-          style: {
-            cursor: 'pointer',
-          },
+          class: 'cursor-pointer',
         },
         {
           default: () => row.baseInfo.dj.nickname,

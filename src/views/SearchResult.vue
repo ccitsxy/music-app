@@ -29,7 +29,7 @@ const { data } = useFetch(
           <div class="flex-row">
             <div class="flex">
               <span> 歌手：{{ item.name }} </span>
-              <n-el v-if="item.alias.length" class="text-$text-color-3">
+              <n-el v-if="item.alias.length" class="opacity-75">
                 （{{ item.alias[0] }}）
               </n-el>
             </div>

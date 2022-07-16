@@ -22,7 +22,7 @@ const columns = [
               NEl,
               {
                 tag: 'span',
-                style: { color: 'var(--text-color-3)' },
+                class: 'opacity-75',
               },
               {
                 default: () => ['（', h('span', null, row.alia), '）'],
@@ -49,9 +49,7 @@ const columns = [
           h(
             'span',
             {
-              style: {
-                cursor: 'pointer',
-              },
+              class: 'cursor-pointer',
             },
             {
               default: () => element.name,
@@ -69,9 +67,13 @@ const columns = [
     title: '专辑',
     key: 'al',
     render(row: { al: { name: string } }) {
-      return h('span', null, {
-        default: () => row.al.name,
-      })
+      return h(
+        'span',
+        { class: 'cursor-pointer' },
+        {
+          default: () => row.al.name,
+        }
+      )
     },
     ellipsis: {
       tooltip: true,
@@ -103,7 +105,7 @@ const rowProps = (row: { id: string }) => {
     artists: [],
   }
   return {
-    style: 'cursor: default;',
+    class: 'cursor-default',
     onDblclick: () => {
       useFetch(`/song/url?id=${row.id}`)
         .json()

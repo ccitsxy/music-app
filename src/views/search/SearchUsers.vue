@@ -17,11 +17,7 @@ const columns = [
       return h(
         'div',
         {
-          style: {
-            width: '64px',
-            height: '64px',
-            display: 'flex',
-          },
+          class: 'w-16 h-16 flex',
         },
         {
           default: () => [
@@ -33,11 +29,7 @@ const columns = [
               {
                 loading: () =>
                   h(NSkeleton, {
-                    style: {
-                      width: '64px',
-                      height: '64px',
-                      display: 'flex',
-                    },
+                    class: 'w-16 h-16 flex',
                   }),
               }
             ),
@@ -53,7 +45,7 @@ const columns = [
     render(row: { nickname: string; alias: string[] }) {
       return h(
         'span',
-        { style: { cursor: 'pointer' } },
+        { class: 'cursor-pointer' },
         {
           default: () => row.nickname,
         }
@@ -70,7 +62,7 @@ const columns = [
     render(row: { description: string; signature: string[]; vipType: string }) {
       return h(
         'span',
-        { style: { cursor: 'pointer' } },
+        { class: 'cursor-pointer' },
         {
           default: () => (row.description ? row.description : row.signature),
         }
@@ -84,7 +76,7 @@ const columns = [
     render(row: { djStatus: string[] }) {
       return h(
         'span',
-        { style: { cursor: 'pointer' } },
+        { class: 'cursor-pointer' },
         {
           default: () => (row.djStatus ? '网易音乐人' : ''),
         }
