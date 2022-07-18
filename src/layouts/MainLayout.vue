@@ -1,11 +1,20 @@
 <script setup lang="ts">
-import { computed, provide, ref, watch } from 'vue'
+import { computed, inject, provide, ref, watch } from 'vue'
+import type { Ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { useSongStore } from '@/stores/song'
 
-import type { MenuOption } from 'naive-ui'
-import { useEventListener, useMediaControls, useTitle } from '@vueuse/core'
+import { useThemeVars, darkTheme } from 'naive-ui'
+import type { MenuOption, GlobalTheme } from 'naive-ui'
+import {
+  useEventListener,
+  // useFetch,
+  useMediaControls,
+  useTitle,
+} from '@vueuse/core'
+import { fixedEncodeURI } from '@/utils/fixedEncodeURI'
+import { appWindow } from '@tauri-apps/api/window'
 
 const menuOptions: MenuOption[] = [
   {
@@ -52,10 +61,138 @@ watch(
   }
 )
 const showSongList = ref(false)
+const isMaximized = ref(false)
+appWindow.isMaximized().then((e) => {
+  isMaximized.value = e
+})
+appWindow.onResized(() => {
+  appWindow.isMaximized().then((e) => {
+    isMaximized.value = e
+  })
+})
+
+const theme = inject<Ref<GlobalTheme | null | undefined>>('theme')
+const themeVars = useThemeVars()
+
+const disableBack = ref(true)
+const disableForward = ref(true)
+watch(
+  () => router.currentRoute.value.path,
+  () => {
+    disableBack.value = window.history.state.back == null
+    disableForward.value = window.history.state.forward == null
+  },
+  {
+    immediate: true,
+  }
+)
+const searchText = ref('')
+function search() {
+  router.push(`/search/${fixedEncodeURI(searchText.value)}`)
+}
+
+const showLoginModal = ref(false)
+const qrimgSrc = ref('')
+function openloginModal() {
+  showLoginModal.value = true
+  loginByQrcode()
+}
+function loginByQrcode() {
+  //todo
+}
 </script>
 
 <template>
-  <n-layout class="h-[calc(100vh-4rem)]">
+  <n-layout class="h-screen">
+    <n-layout-header
+      data-tauri-drag-region
+      class="h-16 flex items-center bg-$n-color px-2"
+      bordered
+    >
+      <n-button
+        quaternary
+        :focusable="false"
+        :native-focus-behavior="false"
+        :disabled="disableBack"
+        @click="$router.go(-1)"
+      >
+        <i-carbon-chevron-left />
+      </n-button>
+      <n-button
+        quaternary
+        :focusable="false"
+        :native-focus-behavior="false"
+        :disabled="disableForward"
+        @click="$router.go(1)"
+      >
+        <i-carbon-chevron-right />
+      </n-button>
+      <n-input
+        v-model:value="searchText"
+        placeholder="搜索"
+        class="mx-4 !w-60"
+        @keyup.enter="search()"
+      >
+        <template #prefix>
+          <i-carbon-search />
+        </template>
+      </n-input>
+      <div class="flex-1" />
+      <n-button
+        quaternary
+        :focusable="false"
+        :native-focus-behavior="false"
+        @click="openloginModal"
+      >
+        <i-carbon-user />
+      </n-button>
+      <n-button quaternary :focusable="false" :native-focus-behavior="false">
+        <i-carbon-settings @click="$router.push('/settings')" />
+      </n-button>
+      <n-button
+        v-if="theme"
+        quaternary
+        :focusable="false"
+        :native-focus-behavior="false"
+        @click="theme = null"
+      >
+        <i-carbon-moon />
+      </n-button>
+      <n-button
+        v-else
+        quaternary
+        :focusable="false"
+        :native-focus-behavior="false"
+        @click="theme = darkTheme"
+      >
+        <i-carbon-sun />
+      </n-button>
+      <n-button
+        quaternary
+        :focusable="false"
+        :native-focus-behavior="false"
+        @click="appWindow.minimize()"
+      >
+        <i-codicon-chrome-minimize />
+      </n-button>
+      <n-button
+        quaternary
+        :focusable="false"
+        :native-focus-behavior="false"
+        @click="appWindow.toggleMaximize()"
+      >
+        <i-codicon-chrome-restore v-if="isMaximized" />
+        <i-codicon-chrome-maximize v-else />
+      </n-button>
+      <n-button
+        quaternary
+        :focusable="false"
+        :native-focus-behavior="false"
+        @click="appWindow.close()"
+      >
+        <i-codicon-chrome-close />
+      </n-button>
+    </n-layout-header>
     <n-layout class="h-[calc(100vh-9rem)]" has-sider>
       <n-layout-sider width="12.5rem" bordered>
         <n-menu
@@ -64,7 +201,48 @@ const showSongList = ref(false)
           @update-value="updateValue"
         />
       </n-layout-sider>
-      <n-layout-content ref="layoutContent" content-style="padding: 24px">
+      <n-layout-content ref="layoutContent" content-style="padding: 1.5rem">
+        <n-modal
+          v-model:show="showLoginModal"
+          :auto-focus="false"
+          :mask-closable="false"
+        >
+          <n-card
+            class="w-96"
+            :bordered="false"
+            size="huge"
+            role="dialog"
+            aria-modal="true"
+          >
+            <template #header-extra>
+              <n-button
+                quaternary
+                :focusable="false"
+                :native-focus-behavior="false"
+                @click="showLoginModal = false"
+              >
+                <i-codicon-chrome-close />
+              </n-button>
+            </template>
+            <template #header>
+              <div class="px-14px">扫码登录</div>
+            </template>
+            <div
+              v-if="qrimgSrc"
+              class="h-48 w-48 my-8 mx-auto flex justify-center"
+            >
+              <use-image :src="qrimgSrc">
+                <template #loading>
+                  <n-skeleton class="w-48 h-48 flex" />
+                </template>
+              </use-image>
+            </div>
+            <n-skeleton
+              v-else
+              class="h-48 w-48 my-8 mx-auto flex justify-center"
+            />
+          </n-card>
+        </n-modal>
         <router-view v-slot="{ Component, route }">
           <component :is="Component" :key="route.fullPath" />
         </router-view>
@@ -91,7 +269,7 @@ const showSongList = ref(false)
             v-if="songs[currentIndex - 1]?.picUrl"
             width="64"
             height="64"
-            :src="`${songs[currentIndex - 1]?.picUrl}?param=256y256`"
+            :src="`${songs[currentIndex - 1]?.picUrl}?param=64y64`"
             class="flex mr-2"
           />
           <div>
@@ -181,8 +359,8 @@ const showSongList = ref(false)
             :max="1"
             :disabled="muted"
             :format-tooltip="(value: number) => {
-              return Math.floor(value * 100)
-            }"
+            return Math.floor(value * 100)
+          }"
             class="w-30 mx-2"
           />
           <n-button
@@ -198,3 +376,35 @@ const showSongList = ref(false)
     </n-layout-footer>
   </n-layout>
 </template>
+
+<style>
+body {
+  overflow: hidden;
+}
+
+.n-layout .n-layout-scroll-container {
+  overflow-y: overlay;
+}
+
+.n-layout .n-layout-scroll-container ::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: transparent;
+}
+
+.n-layout .n-layout-scroll-container ::-webkit-scrollbar-thumb {
+  background-color: v-bind('themeVars.scrollbarColor');
+}
+
+.n-layout .n-layout-scroll-container ::-webkit-scrollbar-thumb:hover {
+  background-color: v-bind('themeVars.scrollbarColorHover');
+}
+
+.n-popover__content {
+  cursor: default;
+}
+
+.n-data-table .n-data-table__pagination {
+  justify-content: center;
+}
+</style>

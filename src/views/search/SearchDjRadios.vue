@@ -24,7 +24,7 @@ const columns = [
             h(
               UseImage,
               {
-                src: `${row.picUrl}?param=256y256`,
+                src: `${row.picUrl}?param=64y64`,
               },
               {
                 loading: () =>

@@ -30,7 +30,7 @@ const columns = [
             h(
               UseImage,
               {
-                src: `${row.uiElement.image.imageUrl}?param=256y256`,
+                src: `${row.uiElement.image.imageUrl}?param=64y64`,
               },
               {
                 loading: () =>

@@ -7,7 +7,7 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "tauri-app",
+    "productName": "nusic-app",
     "version": "0.1.0"
   },
   "tauri": {
@@ -29,7 +29,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "com.music.app",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -55,13 +55,13 @@
     },
     "windows": [
       {
-        "fullscreen": false,
-        "height": 640,
-        "resizable": true,
-        "title": "Tauri App",
-        "width": 1024,
+        "title": "Music App",
         "decorations": false,
-        "visible": false
+        "visible": false,
+        "fullscreen": false,
+        "resizable": true,
+        "minHeight": 640,
+        "minWidth": 1024
       }
     ]
   }

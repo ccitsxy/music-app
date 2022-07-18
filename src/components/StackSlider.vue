@@ -45,7 +45,7 @@ watch([scrubbing, elementX], () => {
         :style="{ width: `${(secondary / max) * 100}%` }"
       />
     </div>
-    <div class="h-full absolute left-8px right-8px bottom-0 top-0">
+    <div class="h-full absolute left-2 right-2 bottom-0 top-0">
       <div
         class="z-0 outline-none absolute top-1/2 cursor-pointer flex"
         style="transform: translate(-50%, -50%)"

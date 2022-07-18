@@ -17,10 +17,10 @@ const { data } = useFetch(
         <n-card
           class="mb-4"
           embedded
-          content-style="display: flex;padding: 12px;height: 48px"
+          content-style="display: flex;padding: 0.75rem;height: 3rem"
         >
           <div class="w-12 h-12 flex mr-2">
-            <use-image :src="`${item.img1v1Url}?param=256y256`">
+            <use-image :src="`${item.img1v1Url}?param=48y48`">
               <template #loading>
                 <n-skeleton class="w-12 h-12 flex" />
               </template>
@@ -40,9 +40,9 @@ const { data } = useFetch(
         </n-card>
       </n-gi>
       <n-gi v-for="item in data?.result?.playlist" :key="item.id">
-        <n-card embedded content-style="display:flex;padding:12px">
+        <n-card embedded content-style="display: flex;padding: 12px">
           <div class="w-12 h-12 flex mr-2">
-            <use-image :src="`${item.coverImgUrl}?param=256y256`">
+            <use-image :src="`${item.coverImgUrl}?param=48y48`">
               <template #loading>
                 <n-skeleton class="w-12 h-12 flex mr-2" />
               </template>
