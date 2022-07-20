@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { shallowRef, watch } from 'vue'
 import { useEventListener, useMouseInElement, useVModel } from '@vueuse/core'
 
 const props = defineProps({
@@ -11,9 +11,9 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue'])
 
-const scrubber = ref()
-const scrubbing = ref(false)
-const pendingValue = ref(0)
+const scrubber = shallowRef()
+const scrubbing = shallowRef(false)
+const pendingValue = shallowRef(0)
 
 useEventListener('mouseup', () => (scrubbing.value = false))
 
@@ -30,18 +30,18 @@ watch([scrubbing, elementX], () => {
 <template>
   <n-el
     ref="scrubber"
-    class="relative h-1 py-7px cursor-pointer select-none"
+    class="relative h-1 py-[7px] cursor-pointer select-none"
     @mousedown="scrubbing = true"
   >
     <div
-      class="relative overflow-hidden h-full w-full bg-$border-color bg-opacity-20"
+      class="relative overflow-hidden h-full w-full bg-[color:var(--border-color)] bg-opacity-20"
     >
       <div
-        class="h-full absolute top-0 left-0 bg-$primary-color"
+        class="h-full absolute top-0 left-0 bg-[color:var(--primary-color)]"
         :style="{ width: `${(value / max) * 100}%` }"
       />
       <div
-        class="h-full absolute opacity-30 top-0 left-0 bg-$primary-color-hover"
+        class="h-full absolute opacity-30 top-0 left-0 bg-[color:var(--primary-color-hover)]"
         :style="{ width: `${(secondary / max) * 100}%` }"
       />
     </div>
@@ -51,7 +51,7 @@ watch([scrubbing, elementX], () => {
         style="transform: translate(-50%, -50%)"
         :style="{ left: `${(value / max) * 100}%` }"
       >
-        <div class="h-4 w-4 rounded-1/2 bg-white stack-slider-shadow" />
+        <div class="h-4 w-4 rounded-full bg-white stack-slider-shadow" />
       </div>
     </div>
   </n-el>

@@ -1,18 +1,13 @@
 <script setup lang="ts">
-import { computed, inject, provide, ref, watch } from 'vue'
-import type { Ref } from 'vue'
+import { computed, inject, provide, shallowRef, watch } from 'vue'
+import type { ShallowRef } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { useSongStore } from '@/stores/song'
 
 import { useThemeVars, darkTheme } from 'naive-ui'
 import type { MenuOption, GlobalTheme } from 'naive-ui'
-import {
-  useEventListener,
-  // useFetch,
-  useMediaControls,
-  useTitle,
-} from '@vueuse/core'
+import { useEventListener, useMediaControls, useTitle } from '@vueuse/core'
 import { fixedEncodeURI } from '@/utils/fixedEncodeURI'
 import { appWindow } from '@tauri-apps/api/window'
 
@@ -26,8 +21,8 @@ const router = useRouter()
 function updateValue(key: string) {
   router.push(key)
 }
-const src = ref('')
-const audio = ref<HTMLMediaElement>()
+const src = shallowRef('')
+const audio = shallowRef<HTMLMediaElement>()
 const { playing, currentTime, duration, volume, buffered, muted } =
   useMediaControls(audio, {
     src: src,
@@ -48,7 +43,7 @@ useEventListener(audio, 'loadstart', () => {
 useEventListener(audio, 'loadeddata', () => {
   playing.value = true
 })
-const layoutContent = ref<HTMLElement>()
+const layoutContent = shallowRef<HTMLElement>()
 provide('layoutContent', layoutContent)
 const { songs, addIndex, decIndex } = useSongStore()
 const currentIndex = computed(() => useSongStore().currentIndex)
@@ -60,8 +55,8 @@ watch(
     useTitle(songs[currentIndex.value - 1].name)
   }
 )
-const showSongList = ref(false)
-const isMaximized = ref(false)
+const showSongList = shallowRef(false)
+const isMaximized = shallowRef(false)
 appWindow.isMaximized().then((e) => {
   isMaximized.value = e
 })
@@ -71,11 +66,11 @@ appWindow.onResized(() => {
   })
 })
 
-const theme = inject<Ref<GlobalTheme | null | undefined>>('theme')
+const theme = inject<ShallowRef<GlobalTheme | null | undefined>>('theme')
 const themeVars = useThemeVars()
 
-const disableBack = ref(true)
-const disableForward = ref(true)
+const disableBack = shallowRef(true)
+const disableForward = shallowRef(true)
 watch(
   () => router.currentRoute.value.path,
   () => {
@@ -86,13 +81,13 @@ watch(
     immediate: true,
   }
 )
-const searchText = ref('')
+const searchText = shallowRef('')
 function search() {
   router.push(`/search/${fixedEncodeURI(searchText.value)}`)
 }
 
-const showLoginModal = ref(false)
-const qrimgSrc = ref('')
+const showLoginModal = shallowRef(false)
+const qrimgSrc = shallowRef('')
 function openloginModal() {
   showLoginModal.value = true
   loginByQrcode()
@@ -225,7 +220,7 @@ function loginByQrcode() {
               </n-button>
             </template>
             <template #header>
-              <div class="px-14px">扫码登录</div>
+              <div class="px-[14px]">扫码登录</div>
             </template>
             <div
               v-if="qrimgSrc"
@@ -254,7 +249,7 @@ function loginByQrcode() {
     >
       <div
         v-if="currentIndex"
-        class="flex items-center absolute left-0 bottom-68px w-screen z-10"
+        class="flex items-center absolute left-0 bottom-[68px] w-screen z-10"
       >
         <stack-slider
           v-model="currentTime"
@@ -273,7 +268,7 @@ function loginByQrcode() {
             class="flex mr-2"
           />
           <div>
-            <n-ellipsis class="flex items-center flex-row mr-4 w-25vw">
+            <n-ellipsis class="flex items-center flex-row mr-4 w-[25vw]">
               <span class="font-bold">
                 {{ songs[currentIndex - 1]?.name }}
               </span>
@@ -361,7 +356,7 @@ function loginByQrcode() {
             :format-tooltip="(value: number) => {
             return Math.floor(value * 100)
           }"
-            class="w-30 mx-2"
+            class="w-32 mx-2"
           />
           <n-button
             quaternary

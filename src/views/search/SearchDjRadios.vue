@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { h, inject, reactive, ref } from 'vue'
-import type { Ref } from 'vue'
+import { h, inject, reactive, shallowRef, watch } from 'vue'
+import type { ShallowRef } from 'vue'
 import { useRoute } from 'vue-router'
 
 import { NSkeleton } from 'naive-ui'
 import { UseImage } from '@vueuse/components'
 
-import { useFetch } from '@/composables/useFetch'
 import { fixedEncodeURI } from '@/utils/fixedEncodeURI'
+import { api } from '@/utils/api'
 
 const columns = [
   {
@@ -86,14 +86,14 @@ const columns = [
   },
 ]
 const route = useRoute()
-const loading = ref(true)
+const loading = shallowRef(true)
 const pagination = reactive({
   showSizePicker: false,
   pageSize: 100,
   page: 1,
   pageCount: 1,
 })
-const url = ref(
+const url = shallowRef(
   fixedEncodeURI(
     `/cloudsearch?keywords=${route.params.text}
     &limit=${pagination.pageSize}
@@ -101,14 +101,23 @@ const url = ref(
     &type=1009`
   )
 )
-const { data, onFetchFinally } = useFetch(url, { refetch: true }).json()
-onFetchFinally(() => {
-  pagination.pageCount = Math.ceil(
-    data.value.result.djRadiosCount / pagination.pageSize
-  )
-  loading.value = false
-})
-const layoutContent = inject('layoutContent') as Ref<HTMLElement>
+const data = shallowRef()
+watch(
+  () => url.value,
+  () => {
+    api.get(url.value).then((res) => {
+      data.value = res.data
+      pagination.pageCount = Math.ceil(
+        data.value.result.djRadiosCount / pagination.pageSize
+      )
+      loading.value = false
+    })
+  },
+  {
+    immediate: true,
+  }
+)
+const layoutContent = inject('layoutContent') as ShallowRef<HTMLElement>
 function onUpdatePage(page: number) {
   pagination.page = page
   url.value = fixedEncodeURI(

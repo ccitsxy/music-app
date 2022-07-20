@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { computed, h, inject, reactive, ref } from 'vue'
-import type { Ref } from 'vue'
+import { computed, h, inject, reactive, ref, shallowRef, watch } from 'vue'
+import type { ShallowRef } from 'vue'
 import { useRoute } from 'vue-router'
 
 import { NEl } from 'naive-ui'
 import { useSongStore } from '@/stores/song'
 import type { Song } from '@/stores/song'
-import { useFetch } from '@/composables/useFetch'
 import { fixedEncodeURI } from '@/utils/fixedEncodeURI'
+import { api } from '@/utils/api'
 
 const columns = [
   {
@@ -117,21 +117,17 @@ const rowProps = (row: { id: string }) => {
   return {
     class: 'cursor-pointer',
     onDblclick: () => {
-      useFetch(`/song/url?id=${row.id}`)
-        .json()
-        .then((result) => {
-          song.src = result.data.value.data[0].url
-          useFetch(`/song/detail?ids=${row.id}`)
-            .json()
-            .then((result) => {
-              song.name = result.data.value.songs[0].name
-              song.picUrl = result.data.value.songs[0].al.picUrl
-              song.artists = result.data.value.songs[0].ar
-              song.alia = result.data.value.songs[0].alia
-              songs.splice(currentIndex.value, 0, song)
-              addIndex()
-            })
+      api.get(`/song/url?id=${row.id}`).then((res) => {
+        song.src = res.data.data[0].url
+        api.get(`/song/detail?ids=${row.id}`).then((res) => {
+          song.name = res.data.songs[0].name
+          song.picUrl = res.data.songs[0].al.picUrl
+          song.artists = res.data.songs[0].ar
+          song.alia = res.data.songs[0].alia
+          songs.splice(currentIndex.value, 0, song)
+          addIndex()
         })
+      })
     },
   }
 }
@@ -139,14 +135,14 @@ function rowKey(rowData: { id: number }) {
   return rowData.id
 }
 const route = useRoute()
-const loading = ref(true)
+const loading = shallowRef(true)
 const pagination = reactive({
   showSizePicker: false,
   pageSize: 20,
   page: 1,
   pageCount: 1,
 })
-const url = ref(
+const url = shallowRef(
   fixedEncodeURI(
     `/cloudsearch?keywords=${route.params.text}
     &limit=${pagination.pageSize}
@@ -154,19 +150,28 @@ const url = ref(
     &type=1006`
   )
 )
-const a = ref<string[]>([])
-const { data, onFetchFinally } = useFetch(url, { refetch: true }).json()
-onFetchFinally(() => {
-  pagination.pageCount = Math.ceil(
-    data.value.result.songCount / pagination.pageSize
-  )
-  loading.value = false
-  if (data.value.result.songs)
-    data.value.result.songs.forEach((element: { id: string }) =>
-      a.value.push(element.id)
-    )
-})
-const layoutContent = inject('layoutContent') as Ref<HTMLElement>
+const expandedRowKeys = ref<string[]>([])
+const data = shallowRef()
+watch(
+  () => url.value,
+  () => {
+    api.get(url.value).then((res) => {
+      data.value = res.data
+      pagination.pageCount = Math.ceil(
+        data.value.result.songCount / pagination.pageSize
+      )
+      loading.value = false
+      if (data.value.result.songs)
+        data.value.result.songs.forEach((element: { id: string }) =>
+          expandedRowKeys.value.push(element.id)
+        )
+    })
+  },
+  {
+    immediate: true,
+  }
+)
+const layoutContent = inject('layoutContent') as ShallowRef<HTMLElement>
 function onUpdatePage(page: number) {
   pagination.page = page
   url.value = fixedEncodeURI(
@@ -189,7 +194,7 @@ function onUpdatePage(page: number) {
       :data="data?.result.songs"
       :pagination="pagination"
       :loading="loading"
-      :expanded-row-keys="a"
+      :expanded-row-keys="expandedRowKeys"
       striped
       :paginate-single-page="false"
       @update-page="onUpdatePage"

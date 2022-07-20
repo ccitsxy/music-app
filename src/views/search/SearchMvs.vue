@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import { reactive, ref, inject } from 'vue'
-import type { Ref } from 'vue'
+import { reactive, shallowRef, inject, watch } from 'vue'
+import type { ShallowRef } from 'vue'
 import { useRoute } from 'vue-router'
 
-import { useFetch } from '@/composables/useFetch'
 import { fixedEncodeURI } from '@/utils/fixedEncodeURI'
+import { api } from '@/utils/api'
 
 const route = useRoute()
-const loading = ref(true)
+const loading = shallowRef(true)
 const pagination = reactive({
   showSizePicker: false,
   pageSize: 24,
   page: 1,
   pageCount: 1,
 })
-const url = ref(
+const url = shallowRef(
   fixedEncodeURI(
     `/cloudsearch?keywords=${route.params.text}
     &limit=${pagination.pageSize}
@@ -22,16 +22,25 @@ const url = ref(
     &type=1004`
   )
 )
-const { data, onFetchFinally } = useFetch(url, { refetch: true }).json()
-onFetchFinally(() => {
-  pagination.pageCount = Math.ceil(
-    data.value.result.mvCount / pagination.pageSize
-  )
-  setTimeout(() => {
-    loading.value = false
-  }, 300)
-})
-const layoutContent = inject('layoutContent') as Ref<HTMLElement>
+const data = shallowRef()
+watch(
+  () => url.value,
+  () => {
+    api.get(url.value).then((res) => {
+      data.value = res.data
+      pagination.pageCount = Math.ceil(
+        data.value.result.mvCount / pagination.pageSize
+      )
+      setTimeout(() => {
+        loading.value = false
+      }, 300)
+    })
+  },
+  {
+    immediate: true,
+  }
+)
+const layoutContent = inject('layoutContent') as ShallowRef<HTMLElement>
 function onUpdatePage(page: number) {
   pagination.page = page
   url.value = fixedEncodeURI(
@@ -51,7 +60,7 @@ const theme = inject('theme')
     <n-grid cols="3 m:3 xl:4" x-gap="16" y-gap="16" responsive="screen">
       <template v-if="loading">
         <template v-if="loading">
-          <n-gi v-for="item in 24" :key="item" class="space-y-1 pb-4.4px">
+          <n-gi v-for="item in 24" :key="item" class="space-y-1 pb-[4.4px]">
             <img
               v-if="theme"
               src="@/assets/skeleton-dark.png"
@@ -102,7 +111,7 @@ const theme = inject('theme')
       </n-gi>
     </n-grid>
     <n-pagination
-      v-if="pagination.pageCount != 1"
+      v-if="pagination.pageCount !== 1"
       class="mt-4 justify-center"
       v-bind="pagination"
       @update-page="onUpdatePage"

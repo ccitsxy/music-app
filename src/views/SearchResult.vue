@@ -1,14 +1,18 @@
 <script setup lang="ts">
+import { shallowRef } from 'vue'
 import { useRoute } from 'vue-router'
 
-import { useFetch } from '@/composables/useFetch'
 import { fixedEncodeURI } from '@/utils/fixedEncodeURI'
+import { api } from '@/utils/api'
 
 const route = useRoute()
 
-const { data } = useFetch(
-  fixedEncodeURI(`/search/multimatch?keywords=${route.params.text}`)
-).json()
+const data = shallowRef()
+api
+  .get(fixedEncodeURI(`/search/multimatch?keywords=${route.params.text}`))
+  .then((res) => {
+    data.value = res.data
+  })
 </script>
 <template>
   <div>

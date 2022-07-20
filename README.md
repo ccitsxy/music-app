@@ -1,6 +1,6 @@
 # music-app
 
-Music App. Tauri + Vite + Vue + Naive UI + Windi CSS.
+Music App. Tauri + Vite + Vue + Naive UI + Tailwind CSS.
 
 ## Recommended IDE Setup
 

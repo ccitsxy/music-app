@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, provide, ref, watch } from 'vue'
+import { onMounted, provide, shallowRef, watch } from 'vue'
 import { appWindow } from '@tauri-apps/api/window'
 import { darkTheme, useOsTheme } from 'naive-ui'
 import type { GlobalThemeOverrides, GlobalTheme } from 'naive-ui'
@@ -24,7 +24,7 @@ const themeOverrides: GlobalThemeOverrides = {
   },
 }
 const osTheme = useOsTheme()
-const theme = ref<GlobalTheme | null>(null)
+const theme = shallowRef<GlobalTheme | null>(null)
 watch(
   () => osTheme.value,
   (newVal) => {
