@@ -5,11 +5,17 @@ import { useRouter } from 'vue-router'
 
 import { useSongStore } from '@/stores/song'
 
-import { useThemeVars, darkTheme } from 'naive-ui'
+import { useThemeVars, darkTheme, useMessage } from 'naive-ui'
 import type { MenuOption, GlobalTheme } from 'naive-ui'
-import { useEventListener, useMediaControls, useTitle } from '@vueuse/core'
+import {
+  useEventListener,
+  useMediaControls,
+  useTitle,
+  useTimeoutPoll,
+} from '@vueuse/core'
 import { fixedEncodeURI } from '@/utils/fixedEncodeURI'
 import { appWindow } from '@tauri-apps/api/window'
+import { api } from '@/utils/api'
 
 const menuOptions: MenuOption[] = [
   {
@@ -87,13 +93,45 @@ function search() {
 }
 
 const showLoginModal = shallowRef(false)
+const unikey = shallowRef('')
 const qrimgSrc = shallowRef('')
+const message = useMessage()
+async function qrcodeCheck() {
+  const res = await api.get(
+    `/login/qr/check?key=${unikey.value}&timerstamp=${Date.now()}`
+  )
+  if (res.data.code === 800) {
+    message.error('二维码已过期,请重新获取')
+  }
+  if (res.data.code === 803) {
+    localStorage.setItem('cookie', res.data.cookie)
+    message.success('二维码登录成功')
+    pause()
+  }
+}
+const { pause, resume } = useTimeoutPoll(qrcodeCheck, 3000)
 function openloginModal() {
   showLoginModal.value = true
   loginByQrcode()
 }
+function closeLoginModel() {
+  showLoginModal.value = false
+  pause()
+}
 function loginByQrcode() {
-  //todo
+  api.get(`/login/qr/key?timerstamp=${Date.now()}`).then((res) => {
+    unikey.value = res.data.data.unikey
+    api
+      .get(
+        `/login/qr/create?key=${
+          unikey.value
+        }&qrimg=true&timerstamp=${Date.now()}`
+      )
+      .then((res) => {
+        qrimgSrc.value = res.data.data.qrimg
+        resume()
+      })
+  })
 }
 </script>
 
@@ -203,39 +241,42 @@ function loginByQrcode() {
           :mask-closable="false"
         >
           <n-card
-            class="w-96"
+            class="w-[480px]"
             :bordered="false"
             size="huge"
             role="dialog"
             aria-modal="true"
+            header-style="padding: 8px"
+            content-style="padding-top: 28px;"
           >
+            <template #header>
+              <div class="text-base pl-[14px]">扫码登录</div>
+            </template>
             <template #header-extra>
               <n-button
                 quaternary
                 :focusable="false"
                 :native-focus-behavior="false"
-                @click="showLoginModal = false"
+                @click="closeLoginModel()"
               >
                 <i-codicon-chrome-close />
               </n-button>
             </template>
-            <template #header>
-              <div class="px-[14px]">扫码登录</div>
-            </template>
-            <div
-              v-if="qrimgSrc"
-              class="my-8 mx-auto flex h-48 w-48 justify-center"
-            >
-              <use-image :src="qrimgSrc">
-                <template #loading>
-                  <n-skeleton class="flex h-48 w-48" />
-                </template>
-              </use-image>
+            <div class="flex items-center">
+              <img
+                width="126"
+                height="221"
+                src="https://p5.music.126.net/obj/wo3DlcOGw6DClTvDisK1/9643571155/525c/faac/2dc6/fe695c03c7c358ddaa4651736b26a55f.png"
+              />
+              <div v-if="qrimgSrc" class="ml-20 flex h-48 w-48">
+                <use-image :src="qrimgSrc">
+                  <template #loading>
+                    <n-skeleton class="flex h-48 w-48" />
+                  </template>
+                </use-image>
+              </div>
+              <n-skeleton v-else class="ml-20 flex h-48 w-48" />
             </div>
-            <n-skeleton
-              v-else
-              class="my-8 mx-auto flex h-48 w-48 justify-center"
-            />
           </n-card>
         </n-modal>
         <router-view v-slot="{ Component, route }">
@@ -269,7 +310,7 @@ function loginByQrcode() {
           />
           <div>
             <n-ellipsis class="mr-4 flex w-[25vw] flex-row items-center">
-              <span class="font-bold">
+              <span>
                 {{ songs[currentIndex - 1]?.name }}
               </span>
               <n-el

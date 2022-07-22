@@ -3,6 +3,8 @@
 // Read more: https://github.com/vuejs/core/pull/3399
 import '@vue/runtime-core'
 
+export {}
+
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     AppRouter: typeof import('./src/layouts/AppRouter.vue')['default']
@@ -29,14 +31,17 @@ declare module '@vue/runtime-core' {
     ICodiconChromeRestore: typeof import('~icons/codicon/chrome-restore')['default']
     IPhPlaylist: typeof import('~icons/ph/playlist')['default']
     MainLayout: typeof import('./src/layouts/MainLayout.vue')['default']
+    NBackTop: typeof import('naive-ui')['NBackTop']
     NButton: typeof import('naive-ui')['NButton']
     NCard: typeof import('naive-ui')['NCard']
     NCarousel: typeof import('naive-ui')['NCarousel']
     NCarouselItem: typeof import('naive-ui')['NCarouselItem']
     NConfigProvider: typeof import('naive-ui')['NConfigProvider']
+    NDataTable: typeof import('naive-ui')['NDataTable']
     NEl: typeof import('naive-ui')['NEl']
     NEllipsis: typeof import('naive-ui')['NEllipsis']
     NGi: typeof import('naive-ui')['NGi']
+    NGlobalStyle: typeof import('naive-ui')['NGlobalStyle']
     NGrid: typeof import('naive-ui')['NGrid']
     NInput: typeof import('naive-ui')['NInput']
     NLayout: typeof import('naive-ui')['NLayout']
@@ -45,10 +50,14 @@ declare module '@vue/runtime-core' {
     NLayoutHeader: typeof import('naive-ui')['NLayoutHeader']
     NLayoutSider: typeof import('naive-ui')['NLayoutSider']
     NMenu: typeof import('naive-ui')['NMenu']
+    NMessageProvider: typeof import('naive-ui')['NMessageProvider']
     NModal: typeof import('naive-ui')['NModal']
+    NPagination: typeof import('naive-ui')['NPagination']
     NSkeleton: typeof import('naive-ui')['NSkeleton']
     NSlider: typeof import('naive-ui')['NSlider']
     NSpin: typeof import('naive-ui')['NSpin']
+    NTabPane: typeof import('naive-ui')['NTabPane']
+    NTabs: typeof import('naive-ui')['NTabs']
     PodcastView: typeof import('./src/views/PodcastView.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
@@ -68,5 +77,3 @@ declare module '@vue/runtime-core' {
     UserSettings: typeof import('./src/views/UserSettings.vue')['default']
   }
 }
-
-export {}

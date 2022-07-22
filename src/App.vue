@@ -21,6 +21,8 @@ const themeOverrides: GlobalThemeOverrides = {
     primaryColorHover: '#ff4d4f',
     primaryColorPressed: '#cf1322',
     primaryColorSuppl: '#ff4d4f',
+    fontFamily:
+      'Arial, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
   },
 }
 const osTheme = useOsTheme()
@@ -40,6 +42,9 @@ provide('theme', theme)
     :theme="theme"
     inline-theme-disabled
   >
-    <app-router />
+    <n-global-style />
+    <n-message-provider>
+      <app-router />
+    </n-message-provider>
   </n-config-provider>
 </template>
