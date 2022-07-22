@@ -17,7 +17,7 @@ const columns = [
       return h(
         'div',
         {
-          class: 'w-16 h-16 flex',
+          class: 'flex w-16 h-16',
         },
         {
           default: () => [
@@ -29,7 +29,7 @@ const columns = [
               {
                 loading: () =>
                   h(NSkeleton, {
-                    class: 'w-16 h-16 flex',
+                    class: 'flex w-16 h-16',
                   }),
               }
             ),

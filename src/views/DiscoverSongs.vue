@@ -14,7 +14,7 @@ api.get('/banner').then((res) => {
       <n-carousel
         autoplay
         effect="card"
-        class="w-full h-[200px] relative"
+        class="relative h-[200px] w-full"
         prev-slide-style="position: absolute;left: 30rem;opacity: 1"
         next-slide-style="position: absolute;left: unset;right: -3.5rem;opacity: 1"
       >
@@ -23,7 +23,7 @@ api.get('/banner').then((res) => {
           :key="item.imageUrl"
           class="!w-[540px]"
         >
-          <img class="w-full h-full" :src="item.imageUrl" />
+          <img class="h-full w-full" :src="item.imageUrl" />
         </n-carousel-item>
       </n-carousel>
     </n-spin>

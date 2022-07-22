@@ -70,8 +70,8 @@ const theme = inject('theme')
             src="@/assets/skeleton.png"
             class="w-full object-scale-down"
           />
-          <n-skeleton class="h-4 w-60 flex" />
-          <n-skeleton class="h-4 w-60 flex" />
+          <n-skeleton class="flex h-4 w-60" />
+          <n-skeleton class="flex h-4 w-60" />
         </n-gi>
       </template>
       <n-gi v-for="video in data?.result.videos" :key="video.id">
@@ -95,7 +95,7 @@ const theme = inject('theme')
             </template>
           </use-image>
         </div>
-        <n-ellipsis class="font-bold w-60">{{ video.title }}</n-ellipsis>
+        <n-ellipsis class="w-60 font-bold">{{ video.title }}</n-ellipsis>
         <div>
           <template v-for="user in video.creator" :key="user.userId">
             <span>

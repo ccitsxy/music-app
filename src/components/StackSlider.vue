@@ -30,28 +30,28 @@ watch([scrubbing, elementX], () => {
 <template>
   <n-el
     ref="scrubber"
-    class="relative h-1 py-[7px] cursor-pointer select-none"
+    class="relative h-1 cursor-pointer select-none py-[7px]"
     @mousedown="scrubbing = true"
   >
     <div
-      class="relative overflow-hidden h-full w-full bg-[color:var(--border-color)] bg-opacity-20"
+      class="relative h-full w-full overflow-hidden bg-[color:var(--border-color)] bg-opacity-20"
     >
       <div
-        class="h-full absolute top-0 left-0 bg-[color:var(--primary-color)]"
+        class="absolute top-0 left-0 h-full bg-[color:var(--primary-color)]"
         :style="{ width: `${(value / max) * 100}%` }"
       />
       <div
-        class="h-full absolute opacity-30 top-0 left-0 bg-[color:var(--primary-color-hover)]"
+        class="absolute top-0 left-0 h-full bg-[color:var(--primary-color-hover)] opacity-30"
         :style="{ width: `${(secondary / max) * 100}%` }"
       />
     </div>
-    <div class="h-full absolute left-2 right-2 bottom-0 top-0">
+    <div class="absolute left-2 right-2 bottom-0 top-0 h-full">
       <div
-        class="z-0 outline-none absolute top-1/2 cursor-pointer flex"
+        class="absolute top-1/2 z-0 flex cursor-pointer outline-none"
         style="transform: translate(-50%, -50%)"
         :style="{ left: `${(value / max) * 100}%` }"
       >
-        <div class="h-4 w-4 rounded-full bg-white stack-slider-shadow" />
+        <div class="stack-slider-shadow h-4 w-4 rounded-full bg-white" />
       </div>
     </div>
   </n-el>

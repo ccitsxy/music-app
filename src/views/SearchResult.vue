@@ -23,10 +23,10 @@ api
           embedded
           content-style="display: flex;padding: 0.75rem;height: 3rem"
         >
-          <div class="w-12 h-12 flex mr-2">
+          <div class="mr-2 flex h-12 w-12">
             <use-image :src="`${item.img1v1Url}?param=48y48`">
               <template #loading>
-                <n-skeleton class="w-12 h-12 flex" />
+                <n-skeleton class="flex h-12 w-12" />
               </template>
             </use-image>
           </div>
@@ -45,10 +45,10 @@ api
       </n-gi>
       <n-gi v-for="item in data?.result?.playlist" :key="item.id">
         <n-card embedded content-style="display: flex;padding: 12px">
-          <div class="w-12 h-12 flex mr-2">
+          <div class="mr-2 flex h-12 w-12">
             <use-image :src="`${item.coverImgUrl}?param=48y48`">
               <template #loading>
-                <n-skeleton class="w-12 h-12 flex mr-2" />
+                <n-skeleton class="mr-2 flex h-12 w-12" />
               </template>
             </use-image>
           </div>

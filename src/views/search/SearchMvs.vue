@@ -71,8 +71,8 @@ const theme = inject('theme')
               src="@/assets/skeleton.png"
               class="w-full object-scale-down"
             />
-            <n-skeleton class="h-4 w-60 flex" />
-            <n-skeleton class="h-4 w-60 flex" />
+            <n-skeleton class="flex h-4 w-60" />
+            <n-skeleton class="flex h-4 w-60" />
           </n-gi>
         </template>
       </template>
@@ -97,7 +97,7 @@ const theme = inject('theme')
             </template>
           </use-image>
         </div>
-        <n-ellipsis class="font-bold w-60">{{ mv.name }}</n-ellipsis>
+        <n-ellipsis class="w-60 font-bold">{{ mv.name }}</n-ellipsis>
         <div>
           <template v-for="artist in mv.artists" :key="artist.name">
             <span>

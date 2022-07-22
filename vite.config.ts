@@ -46,7 +46,6 @@ export default defineConfig({
     }),
     Icons(),
     visualizer({
-      open: true,
       gzipSize: true,
       brotliSize: true,
     }),

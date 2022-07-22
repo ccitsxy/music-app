@@ -101,7 +101,7 @@ function loginByQrcode() {
   <n-layout class="h-screen">
     <n-layout-header
       data-tauri-drag-region
-      class="h-16 flex items-center bg-$n-color px-2"
+      class="bg-$n-color flex h-16 items-center px-2"
       bordered
     >
       <n-button
@@ -224,17 +224,17 @@ function loginByQrcode() {
             </template>
             <div
               v-if="qrimgSrc"
-              class="h-48 w-48 my-8 mx-auto flex justify-center"
+              class="my-8 mx-auto flex h-48 w-48 justify-center"
             >
               <use-image :src="qrimgSrc">
                 <template #loading>
-                  <n-skeleton class="w-48 h-48 flex" />
+                  <n-skeleton class="flex h-48 w-48" />
                 </template>
               </use-image>
             </div>
             <n-skeleton
               v-else
-              class="h-48 w-48 my-8 mx-auto flex justify-center"
+              class="my-8 mx-auto flex h-48 w-48 justify-center"
             />
           </n-card>
         </n-modal>
@@ -245,11 +245,11 @@ function loginByQrcode() {
     </n-layout>
     <n-layout-footer
       bordered
-      class="h-20 flex items-center bg-transparent px-2"
+      class="flex h-20 items-center bg-transparent px-2"
     >
       <div
         v-if="currentIndex"
-        class="flex items-center absolute left-0 bottom-[68px] w-screen z-10"
+        class="absolute left-0 bottom-[68px] z-10 flex w-screen items-center"
       >
         <stack-slider
           v-model="currentTime"
@@ -265,10 +265,10 @@ function loginByQrcode() {
             width="64"
             height="64"
             :src="`${songs[currentIndex - 1]?.picUrl}?param=64y64`"
-            class="flex mr-2"
+            class="mr-2 flex"
           />
           <div>
-            <n-ellipsis class="flex items-center flex-row mr-4 w-[25vw]">
+            <n-ellipsis class="mr-4 flex w-[25vw] flex-row items-center">
               <span class="font-bold">
                 {{ songs[currentIndex - 1]?.name }}
               </span>
@@ -280,7 +280,7 @@ function loginByQrcode() {
                 （{{ songs[currentIndex - 1]?.alia[0] }}）
               </n-el>
             </n-ellipsis>
-            <div class="flex items-center mr-4">
+            <div class="mr-4 flex items-center">
               <span>
                 <template
                   v-for="item in songs[currentIndex - 1]?.artists"
@@ -300,7 +300,7 @@ function loginByQrcode() {
         </n-gi>
         <n-gi span="1" class="flex items-center justify-center">
           <audio ref="audio" />
-          <span class="flex mr-2"></span>
+          <span class="mr-2 flex"></span>
           <n-button
             quaternary
             :focusable="false"
@@ -334,7 +334,7 @@ function loginByQrcode() {
           </n-button>
         </n-gi>
         <n-gi span="2" class="flex items-center justify-end">
-          <span v-if="currentIndex" class="flex mr-2">
+          <span v-if="currentIndex" class="mr-2 flex">
             {{ formatDuration(currentTime) }} / {{ formatDuration(duration) }}
           </span>
           <n-button
@@ -356,7 +356,7 @@ function loginByQrcode() {
             :format-tooltip="(value: number) => {
             return Math.floor(value * 100)
           }"
-            class="w-32 mx-2"
+            class="mx-2 w-32"
           />
           <n-button
             quaternary
