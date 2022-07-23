@@ -1,21 +1,9 @@
 <script setup lang="ts">
-import { computed, inject, provide, shallowRef, watch } from 'vue'
-import type { ShallowRef } from 'vue'
+import { provide, shallowRef } from 'vue'
 import { useRouter } from 'vue-router'
 
-import { useSongStore } from '@/stores/song'
-
-import { useThemeVars, darkTheme, useMessage } from 'naive-ui'
-import type { MenuOption, GlobalTheme } from 'naive-ui'
-import {
-  useEventListener,
-  useMediaControls,
-  useTitle,
-  useTimeoutPoll,
-} from '@vueuse/core'
-import { fixedEncodeURI } from '@/utils/fixedEncodeURI'
-import { appWindow } from '@tauri-apps/api/window'
-import { api } from '@/utils/api'
+import { useThemeVars } from 'naive-ui'
+import type { MenuOption } from 'naive-ui'
 
 const menuOptions: MenuOption[] = [
   {
@@ -27,112 +15,10 @@ const router = useRouter()
 function updateValue(key: string) {
   router.push(key)
 }
-const src = shallowRef('')
-const audio = shallowRef<HTMLMediaElement>()
-const { playing, currentTime, duration, volume, buffered, muted } =
-  useMediaControls(audio, {
-    src: src,
-  })
-function formatDuration(duration: number) {
-  let minutes = Math.floor(duration / 60).toString()
-  if (minutes.length === 1) minutes = `0${minutes}`
-  let seconds = Math.floor(duration % 60).toString()
-  if (seconds.length === 1) seconds = `0${seconds}`
-  return `${minutes}:${seconds}`
-}
-const endBuffer = computed(() =>
-  buffered.value.length > 0 ? buffered.value[buffered.value.length - 1][1] : 0
-)
-useEventListener(audio, 'loadstart', () => {
-  playing.value = false
-})
-useEventListener(audio, 'loadeddata', () => {
-  playing.value = true
-})
 const layoutContent = shallowRef<HTMLElement>()
 provide('layoutContent', layoutContent)
-const { songs, addIndex, decIndex } = useSongStore()
-const currentIndex = computed(() => useSongStore().currentIndex)
-watch(
-  () => currentIndex.value,
-  () => {
-    src.value = songs[currentIndex.value - 1].src
-    audio.value?.load()
-    useTitle(songs[currentIndex.value - 1].name)
-  }
-)
-const showSongList = shallowRef(false)
-const isMaximized = shallowRef(false)
-appWindow.isMaximized().then((e) => {
-  isMaximized.value = e
-})
-appWindow.onResized(() => {
-  appWindow.isMaximized().then((e) => {
-    isMaximized.value = e
-  })
-})
 
-const theme = inject<ShallowRef<GlobalTheme | null | undefined>>('theme')
 const themeVars = useThemeVars()
-
-const disableBack = shallowRef(true)
-const disableForward = shallowRef(true)
-watch(
-  () => router.currentRoute.value.path,
-  () => {
-    disableBack.value = window.history.state.back == null
-    disableForward.value = window.history.state.forward == null
-  },
-  {
-    immediate: true,
-  }
-)
-const searchText = shallowRef('')
-function search() {
-  router.push(`/search/${fixedEncodeURI(searchText.value)}`)
-}
-
-const showLoginModal = shallowRef(false)
-const unikey = shallowRef('')
-const qrimgSrc = shallowRef('')
-const message = useMessage()
-async function qrcodeCheck() {
-  const res = await api.get(
-    `/login/qr/check?key=${unikey.value}&timerstamp=${Date.now()}`
-  )
-  if (res.data.code === 800) {
-    message.error('二维码已过期,请重新获取')
-  }
-  if (res.data.code === 803) {
-    localStorage.setItem('cookie', res.data.cookie)
-    message.success('二维码登录成功')
-    pause()
-  }
-}
-const { pause, resume } = useTimeoutPoll(qrcodeCheck, 3000)
-function openloginModal() {
-  showLoginModal.value = true
-  loginByQrcode()
-}
-function closeLoginModel() {
-  showLoginModal.value = false
-  pause()
-}
-function loginByQrcode() {
-  api.get(`/login/qr/key?timerstamp=${Date.now()}`).then((res) => {
-    unikey.value = res.data.data.unikey
-    api
-      .get(
-        `/login/qr/create?key=${
-          unikey.value
-        }&qrimg=true&timerstamp=${Date.now()}`
-      )
-      .then((res) => {
-        qrimgSrc.value = res.data.data.qrimg
-        resume()
-      })
-  })
-}
 </script>
 
 <template>
@@ -142,89 +28,7 @@ function loginByQrcode() {
       class="bg-$n-color flex h-16 items-center px-2"
       bordered
     >
-      <n-button
-        quaternary
-        :focusable="false"
-        :native-focus-behavior="false"
-        :disabled="disableBack"
-        @click="$router.go(-1)"
-      >
-        <i-carbon-chevron-left />
-      </n-button>
-      <n-button
-        quaternary
-        :focusable="false"
-        :native-focus-behavior="false"
-        :disabled="disableForward"
-        @click="$router.go(1)"
-      >
-        <i-carbon-chevron-right />
-      </n-button>
-      <n-input
-        v-model:value="searchText"
-        placeholder="搜索"
-        class="mx-4 !w-60"
-        @keyup.enter="search()"
-      >
-        <template #prefix>
-          <i-carbon-search />
-        </template>
-      </n-input>
-      <div class="flex-1" />
-      <n-button
-        quaternary
-        :focusable="false"
-        :native-focus-behavior="false"
-        @click="openloginModal"
-      >
-        <i-carbon-user />
-      </n-button>
-      <n-button quaternary :focusable="false" :native-focus-behavior="false">
-        <i-carbon-settings @click="$router.push('/settings')" />
-      </n-button>
-      <n-button
-        v-if="theme"
-        quaternary
-        :focusable="false"
-        :native-focus-behavior="false"
-        @click="theme = null"
-      >
-        <i-carbon-moon />
-      </n-button>
-      <n-button
-        v-else
-        quaternary
-        :focusable="false"
-        :native-focus-behavior="false"
-        @click="theme = darkTheme"
-      >
-        <i-carbon-sun />
-      </n-button>
-      <n-button
-        quaternary
-        :focusable="false"
-        :native-focus-behavior="false"
-        @click="appWindow.minimize()"
-      >
-        <i-codicon-chrome-minimize />
-      </n-button>
-      <n-button
-        quaternary
-        :focusable="false"
-        :native-focus-behavior="false"
-        @click="appWindow.toggleMaximize()"
-      >
-        <i-codicon-chrome-restore v-if="isMaximized" />
-        <i-codicon-chrome-maximize v-else />
-      </n-button>
-      <n-button
-        quaternary
-        :focusable="false"
-        :native-focus-behavior="false"
-        @click="appWindow.close()"
-      >
-        <i-codicon-chrome-close />
-      </n-button>
+      <layout-header />
     </n-layout-header>
     <n-layout class="h-[calc(100vh-9rem)]" has-sider>
       <n-layout-sider width="12.5rem" bordered>
@@ -235,50 +39,6 @@ function loginByQrcode() {
         />
       </n-layout-sider>
       <n-layout-content ref="layoutContent" content-style="padding: 1.5rem">
-        <n-modal
-          v-model:show="showLoginModal"
-          :auto-focus="false"
-          :mask-closable="false"
-        >
-          <n-card
-            class="w-[480px]"
-            :bordered="false"
-            size="huge"
-            role="dialog"
-            aria-modal="true"
-            header-style="padding: 8px"
-            content-style="padding-top: 28px;"
-          >
-            <template #header>
-              <div class="text-base pl-[14px]">扫码登录</div>
-            </template>
-            <template #header-extra>
-              <n-button
-                quaternary
-                :focusable="false"
-                :native-focus-behavior="false"
-                @click="closeLoginModel()"
-              >
-                <i-codicon-chrome-close />
-              </n-button>
-            </template>
-            <div class="flex items-center">
-              <img
-                width="126"
-                height="221"
-                src="https://p5.music.126.net/obj/wo3DlcOGw6DClTvDisK1/9643571155/525c/faac/2dc6/fe695c03c7c358ddaa4651736b26a55f.png"
-              />
-              <div v-if="qrimgSrc" class="ml-20 flex h-48 w-48">
-                <use-image :src="qrimgSrc">
-                  <template #loading>
-                    <n-skeleton class="flex h-48 w-48" />
-                  </template>
-                </use-image>
-              </div>
-              <n-skeleton v-else class="ml-20 flex h-48 w-48" />
-            </div>
-          </n-card>
-        </n-modal>
         <router-view v-slot="{ Component, route }">
           <component :is="Component" :key="route.fullPath" />
         </router-view>
@@ -288,127 +48,7 @@ function loginByQrcode() {
       bordered
       class="flex h-20 items-center bg-transparent px-2"
     >
-      <div
-        v-if="currentIndex"
-        class="absolute left-0 bottom-[68px] z-10 flex w-screen items-center"
-      >
-        <stack-slider
-          v-model="currentTime"
-          :max="duration"
-          :secondary="endBuffer"
-          class="flex w-full"
-        />
-      </div>
-      <n-grid class="h-full" :cols="5">
-        <n-gi span="2" class="flex items-center">
-          <img
-            v-if="songs[currentIndex - 1]?.picUrl"
-            width="64"
-            height="64"
-            :src="`${songs[currentIndex - 1]?.picUrl}?param=64y64`"
-            class="mr-2 flex"
-          />
-          <div>
-            <n-ellipsis class="mr-4 flex w-[25vw] flex-row items-center">
-              <span>
-                {{ songs[currentIndex - 1]?.name }}
-              </span>
-              <n-el
-                v-if="songs[currentIndex - 1]?.alia[0]"
-                tag="span"
-                class="opacity-75"
-              >
-                （{{ songs[currentIndex - 1]?.alia[0] }}）
-              </n-el>
-            </n-ellipsis>
-            <div class="mr-4 flex items-center">
-              <span>
-                <template
-                  v-for="item in songs[currentIndex - 1]?.artists"
-                  :key="item.id"
-                >
-                  <span>{{ item?.name }}</span>
-                  {{
-                    songs[currentIndex - 1]?.artists.length - 1 ===
-                    songs[currentIndex - 1]?.artists.indexOf(item)
-                      ? ''
-                      : ' / '
-                  }}
-                </template>
-              </span>
-            </div>
-          </div>
-        </n-gi>
-        <n-gi span="1" class="flex items-center justify-center">
-          <audio ref="audio" />
-          <span class="mr-2 flex"></span>
-          <n-button
-            quaternary
-            :focusable="false"
-            :native-focus-behavior="false"
-            @click="decIndex()"
-            :disabled="currentIndex <= 1"
-          >
-            <i-bi-skip-start-fill />
-          </n-button>
-          <n-button
-            secondary
-            :focusable="false"
-            :native-focus-behavior="false"
-            circle
-            :disabled="songs.length === 0"
-            size="large"
-            class="mx-4"
-            @click="playing = !playing"
-          >
-            <i-carbon-pause-filled v-if="playing" />
-            <i-carbon-play-filled-alt v-else />
-          </n-button>
-          <n-button
-            quaternary
-            :focusable="false"
-            :native-focus-behavior="false"
-            :disabled="currentIndex === songs.length || songs.length === 0"
-            @click="addIndex()"
-          >
-            <i-bi-skip-end-fill />
-          </n-button>
-        </n-gi>
-        <n-gi span="2" class="flex items-center justify-end">
-          <span v-if="currentIndex" class="mr-2 flex">
-            {{ formatDuration(currentTime) }} / {{ formatDuration(duration) }}
-          </span>
-          <n-button
-            quaternary
-            :focusable="false"
-            :native-focus-behavior="false"
-            ref="trigger"
-            @click="muted = !muted"
-          >
-            <i-carbon-volume-mute v-if="muted || volume === 0" />
-            <i-carbon-volume-up v-else />
-          </n-button>
-          <n-slider
-            v-model:value="volume"
-            ref="slider"
-            :step="0.01"
-            :max="1"
-            :disabled="muted"
-            :format-tooltip="(value: number) => {
-            return Math.floor(value * 100)
-          }"
-            class="mx-2 w-32"
-          />
-          <n-button
-            quaternary
-            :focusable="false"
-            :native-focus-behavior="false"
-            @click="showSongList = true"
-          >
-            <i-ph-playlist />
-          </n-button>
-        </n-gi>
-      </n-grid>
+      <layout-footer />
     </n-layout-footer>
   </n-layout>
 </template>

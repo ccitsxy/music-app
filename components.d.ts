@@ -30,6 +30,8 @@ declare module '@vue/runtime-core' {
     ICodiconChromeMinimize: typeof import('~icons/codicon/chrome-minimize')['default']
     ICodiconChromeRestore: typeof import('~icons/codicon/chrome-restore')['default']
     IPhPlaylist: typeof import('~icons/ph/playlist')['default']
+    LayoutFooter: typeof import('./src/layouts/LayoutFooter.vue')['default']
+    LayoutHeader: typeof import('./src/layouts/LayoutHeader.vue')['default']
     MainLayout: typeof import('./src/layouts/MainLayout.vue')['default']
     NBackTop: typeof import('naive-ui')['NBackTop']
     NButton: typeof import('naive-ui')['NButton']
