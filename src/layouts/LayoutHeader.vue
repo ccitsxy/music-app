@@ -38,21 +38,28 @@ async function qrcodeCheck() {
   )
   if (res.data.code === 800) {
     message.error('二维码已过期,请重新获取')
+    pause()
+    showLoginModal.value = false
   }
   if (res.data.code === 803) {
     localStorage.setItem('cookie', res.data.cookie)
     message.success('二维码登录成功')
     pause()
+    showLoginModal.value = false
   }
 }
 const { pause, resume } = useTimeoutPoll(qrcodeCheck, 3000)
+function clickAvatar() {
+  if (localStorage.getItem('cookie')) router.push('/')
+  else openloginModal()
+}
 function openloginModal() {
-  showLoginModal.value = true
   loginByQrcode()
+  showLoginModal.value = true
 }
 function closeLoginModel() {
-  showLoginModal.value = false
   pause()
+  showLoginModal.value = false
 }
 function loginByQrcode() {
   api.get(`/login/qr/key?timerstamp=${Date.now()}`).then((res) => {
@@ -88,7 +95,7 @@ appWindow.onResized(() => {
     :disabled="disableBack"
     @click="$router.go(-1)"
   >
-    <i-carbon-chevron-left />
+    <div class="i-carbon-chevron-left" />
   </n-button>
   <n-button
     quaternary
@@ -97,7 +104,7 @@ appWindow.onResized(() => {
     :disabled="disableForward"
     @click="$router.go(1)"
   >
-    <i-carbon-chevron-right />
+    <div class="i-carbon-chevron-right" />
   </n-button>
   <n-input
     v-model:value="searchText"
@@ -106,7 +113,7 @@ appWindow.onResized(() => {
     @keyup.enter="search()"
   >
     <template #prefix>
-      <i-carbon-search />
+      <div class="i-carbon-search" />
     </template>
   </n-input>
   <div class="flex-1" />
@@ -114,12 +121,9 @@ appWindow.onResized(() => {
     quaternary
     :focusable="false"
     :native-focus-behavior="false"
-    @click="openloginModal()"
+    @click="clickAvatar()"
   >
-    <i-carbon-user />
-  </n-button>
-  <n-button quaternary :focusable="false" :native-focus-behavior="false">
-    <i-carbon-settings @click="$router.push('/settings')" />
+    <div class="i-carbon-user" />
   </n-button>
   <n-button
     v-if="theme"
@@ -128,7 +132,7 @@ appWindow.onResized(() => {
     :native-focus-behavior="false"
     @click="theme = null"
   >
-    <i-carbon-moon />
+    <div class="i-carbon-moon" />
   </n-button>
   <n-button
     v-else
@@ -137,7 +141,15 @@ appWindow.onResized(() => {
     :native-focus-behavior="false"
     @click="theme = darkTheme"
   >
-    <i-carbon-sun />
+    <div class="i-carbon-sun" />
+  </n-button>
+  <n-button
+    quaternary
+    :focusable="false"
+    :native-focus-behavior="false"
+    @click="$router.push('/settings')"
+  >
+    <div class="i-carbon-settings" />
   </n-button>
   <n-button
     quaternary
@@ -145,7 +157,7 @@ appWindow.onResized(() => {
     :native-focus-behavior="false"
     @click="appWindow.minimize()"
   >
-    <i-codicon-chrome-minimize />
+    <div class="i-codicon-chrome-minimize" />
   </n-button>
   <n-button
     quaternary
@@ -153,8 +165,8 @@ appWindow.onResized(() => {
     :native-focus-behavior="false"
     @click="appWindow.toggleMaximize()"
   >
-    <i-codicon-chrome-restore v-if="isMaximized" />
-    <i-codicon-chrome-maximize v-else />
+    <div class="i-codicon-chrome-restore" v-if="isMaximized" />
+    <div class="i-codicon-chrome-maximize" v-else />
   </n-button>
   <n-button
     quaternary
@@ -162,7 +174,7 @@ appWindow.onResized(() => {
     :native-focus-behavior="false"
     @click="appWindow.close()"
   >
-    <i-codicon-chrome-close />
+    <div class="i-codicon-chrome-close" />
   </n-button>
   <n-modal
     v-model:show="showLoginModal"
@@ -188,7 +200,7 @@ appWindow.onResized(() => {
           :native-focus-behavior="false"
           @click="closeLoginModel()"
         >
-          <i-codicon-chrome-close />
+          <div class="i-codicon-chrome-close" />
         </n-button>
       </template>
       <div class="flex items-center">

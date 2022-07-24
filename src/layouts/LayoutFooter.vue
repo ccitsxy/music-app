@@ -102,7 +102,7 @@ const showSongList = shallowRef(false)
         @click="decIndex()"
         :disabled="currentIndex <= 1"
       >
-        <i-bi-skip-start-fill />
+        <div class="i-bi-skip-start-fill" />
       </n-button>
       <n-button
         secondary
@@ -114,8 +114,8 @@ const showSongList = shallowRef(false)
         class="mx-4"
         @click="playing = !playing"
       >
-        <i-carbon-pause-filled v-if="playing" />
-        <i-carbon-play-filled-alt v-else />
+        <div class="i-carbon-pause-filled" v-if="playing" />
+        <div class="i-carbon-play-filled-alt" v-else />
       </n-button>
       <n-button
         quaternary
@@ -124,7 +124,7 @@ const showSongList = shallowRef(false)
         :disabled="currentIndex === songs.length || songs.length === 0"
         @click="addIndex()"
       >
-        <i-bi-skip-end-fill />
+        <div class="i-bi-skip-end-fill" />
       </n-button>
     </n-gi>
     <n-gi span="2" class="flex items-center justify-end">
@@ -138,8 +138,8 @@ const showSongList = shallowRef(false)
         ref="trigger"
         @click="muted = !muted"
       >
-        <i-carbon-volume-mute v-if="muted || volume === 0" />
-        <i-carbon-volume-up v-else />
+        <div class="i-carbon-volume-mute" v-if="muted || volume === 0" />
+        <div class="i-carbon-volume-up" v-else />
       </n-button>
       <n-slider
         v-model:value="volume"
@@ -158,7 +158,7 @@ const showSongList = shallowRef(false)
         :native-focus-behavior="false"
         @click="showSongList = true"
       >
-        <i-ph-playlist />
+        <div class="i-ph-playlist" />
       </n-button>
     </n-gi>
   </n-grid>

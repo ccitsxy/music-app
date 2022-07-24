@@ -25,7 +25,7 @@ const themeVars = useThemeVars()
   <n-layout class="h-screen">
     <n-layout-header
       data-tauri-drag-region
-      class="bg-$n-color flex h-16 items-center px-2"
+      class="flex h-16 items-center px-2"
       bordered
     >
       <layout-header />

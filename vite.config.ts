@@ -8,8 +8,7 @@ import {
   NaiveUiResolver,
   VueUseComponentsResolver,
 } from 'unplugin-vue-components/resolvers'
-import Icons from 'unplugin-icons/vite'
-import IconsResolver from 'unplugin-icons/resolver'
+import Unocss from 'unocss/vite'
 import { visualizer } from 'rollup-plugin-visualizer'
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -37,14 +36,10 @@ export default defineConfig({
     vueJsx(),
     Components({
       dts: true,
-      resolvers: [
-        NaiveUiResolver(),
-        IconsResolver(),
-        VueUseComponentsResolver(),
-      ],
+      resolvers: [NaiveUiResolver(), VueUseComponentsResolver()],
       dirs: ['src/components', 'src/layouts', 'src/views'],
     }),
-    Icons(),
+    Unocss(),
     visualizer({
       gzipSize: true,
       brotliSize: true,
