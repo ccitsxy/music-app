@@ -13,8 +13,6 @@ api.get('/user/account').then((res) => {
     <n-button :focusable="false" :native-focus-behavior="false">
       button
     </n-button>
-    <pre>
-      {{ data }}
-    </pre>
+    <pre>{{ data }}</pre>
   </div>
 </template>
